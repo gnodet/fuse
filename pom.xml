@@ -119,6 +119,9 @@
         <aries-util-version>1.0.1.redhat-${full-perfectus-build}</aries-util-version>
         <aries.version>1.0.0</aries.version>
         <aries-proxy-version>1.0.1.redhat-${full-perfectus-build}</aries-proxy-version>
+        <arquillian-core-version>1.1.1.Final</arquillian-core-version>
+        <arquillian-osgi-version>2.1.0.CR1</arquillian-osgi-version>
+        <arquillian-tomcat-version>1.0.0.CR5</arquillian-tomcat-version>
         <asm.version>4.1</asm.version>
         <asm.bundle.version>3.3.1_1</asm.bundle.version>
         <bndlib-version>1.43.0</bndlib-version>
@@ -166,6 +169,7 @@
         <felix-scr-ds-annotations-version>1.2.4</felix-scr-ds-annotations-version>
         <felix-gogo-version>0.11.0.redhat-${full-perfectus-build}</felix-gogo-version>
         <fuse-cdc-version>1.1.0</fuse-cdc-version>
+        <gravia-version>1.1.0.Alpha1</gravia-version>
         <guava-version>14.0.1</guava-version>
         <guava.osgi.version.clean>13.0.1</guava.osgi.version.clean>
         <hadoop-version>1.2.1</hadoop-version>
@@ -245,6 +249,7 @@
         <servicemix-specs-version>2.3.0.redhat-${full-perfectus-build}</servicemix-specs-version>
         <servicemix-utils-version>1.6.0.redhat-${full-perfectus-build}</servicemix-utils-version>
         <servlet-api-version>2.5</servlet-api-version>
+        <shrinkwrap-version>1.1.2</shrinkwrap-version>
         <sigar-version>1.6.4</sigar-version>
         <slf4j-api-version>1.6.6</slf4j-api-version>
         <slf4j-version>1.6.6</slf4j-version>
@@ -325,6 +330,7 @@
         <snmp4j.bundle.version>1.8.1_4</snmp4j.bundle.version>
         <validation-api-version>1.1.0.Final</validation-api-version>
         <velocity.bundle.version>1.7_3</velocity.bundle.version>
+        <tomcat-version>7.0.42</tomcat-version>
         <wsdl4j.bundle.version>1.6.2_3</wsdl4j.bundle.version>
         <xalan.bundle.version>2.7.1_4</xalan.bundle.version>
         <xerces.bundle.version>2.9.1_4</xerces.bundle.version>
@@ -486,6 +492,33 @@
     <dependencyManagement>
         <dependencies>
         
+            <!-- Arquillian -->
+            <dependency>
+                <groupId>org.jboss.arquillian.junit</groupId>
+                <artifactId>arquillian-junit-container</artifactId>
+                <version>${arquillian-core-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.junit</groupId>
+                <artifactId>arquillian-junit-standalone</artifactId>
+                <version>${arquillian-core-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.osgi</groupId>
+                <artifactId>arquillian-osgi-bundle</artifactId>
+                <version>${arquillian-osgi-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.osgi</groupId>
+                <artifactId>arquillian-osgi-karaf-embedded</artifactId>
+                <version>${arquillian-osgi-version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.jboss.arquillian.container</groupId>
+              <artifactId>arquillian-tomcat-managed-7</artifactId>
+              <version>${arquillian-tomcat-version}</version>
+            </dependency>
+            
             <!-- Fabric -->
             <dependency>
                 <groupId>org.fusesource.fabric</groupId>
@@ -760,6 +793,39 @@
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
+
+            <!-- Gravia -->
+            <dependency>
+                <groupId>org.jboss.gravia</groupId>
+                <artifactId>gravia-container-tomcat</artifactId>
+                <version>${gravia-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gravia</groupId>
+                <artifactId>gravia-container-wildfly</artifactId>
+                <version>${gravia-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gravia</groupId>
+                <artifactId>gravia-resource</artifactId>
+                <version>${gravia-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gravia</groupId>
+                <artifactId>gravia-runtime-api</artifactId>
+                <version>${gravia-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gravia</groupId>
+                <artifactId>gravia-runtime-osgi</artifactId>
+                <version>${gravia-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.gravia</groupId>
+                <artifactId>gravia-runtime-embedded</artifactId>
+                <version>${gravia-version}</version>
+            </dependency>
+            
             <!-- LogBack -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -802,6 +868,14 @@
                 <artifactId>commons-logging-api</artifactId>
                 <version>1.1</version>
             </dependency>
+
+            <!-- JBoss -->
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-api</artifactId>
+                <version>${shrinkwrap-version}</version>
+            </dependency>
+            
             <!-- Karaf version -->
             <dependency>
                 <groupId>org.apache.karaf.assemblies.features</groupId>
@@ -893,6 +967,18 @@
                 <version>${scala-version}</version>
             </dependency>
 
+            <!-- WildFly -->
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-arquillian-container-managed</artifactId>
+                <version>${wildfly-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-arquillian-protocol-jmx</artifactId>
+                <version>${wildfly-version}</version>
+            </dependency>
+            
             <!-- Others -->
             <dependency>
                 <groupId>org.apache.felix</groupId>
@@ -1306,6 +1392,9 @@
         <module>maven-util</module>
         <module>fab</module>
         <module>fabric</module>
+        <module>fpr</module>
+        <!-- has 1.7 vertx dependency
+        <module>gateway</module -->
         <module>insight</module>
         <module>mq</module>
         <module>parent</module>
