@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.fusesource</groupId>
         <artifactId>fusesource-pom</artifactId>
-        <version>1.9</version>
+        <version>1.10</version>
     </parent>
 
     <groupId>org.jboss.fuse.bom</groupId>
@@ -51,7 +51,7 @@
     </prerequisites>
 
     <properties>
-        <perfectus-build>157</perfectus-build>
+        <perfectus-build>204</perfectus-build>
         <perfectus.version>${perfectus-build}</perfectus.version>
         <forge-project-id>fabric</forge-project-id>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -76,7 +76,7 @@
         <fuse.osgi.import.before.defaults />
         <fuse.osgi.import.additional />
         <fuse.osgi.import.pkg>
-            org.fusesource.fabric.*;${fuse.osgi.import.fabric.version},
+            io.fabric8.*;${fuse.osgi.import.fabric.version},
             ${fuse.osgi.import.before.defaults},
             ${fuse.osgi.import.defaults},
             ${fuse.osgi.import.additional},
@@ -85,7 +85,7 @@
         <fuse.osgi.activator />
         <fuse.osgi.failok>false</fuse.osgi.failok>
         <fuse.osgi.private.pkg>!*</fuse.osgi.private.pkg>
-        <fuse.osgi.export>org.fusesource.fabric.*;version=${fuse.osgi.version};-noimport:=true</fuse.osgi.export>
+        <fuse.osgi.export>io.fabric8.*;version=${fuse.osgi.version};-noimport:=true</fuse.osgi.export>
         <fuse.osgi.split.pkg>-split-package:=first</fuse.osgi.split.pkg>
         <fuse.osgi.import>${fuse.osgi.import.pkg}</fuse.osgi.import>
         <fuse.osgi.dynamic />
@@ -121,6 +121,8 @@
         <aries-proxy-version>1.0.1.redhat-${full-perfectus-build}</aries-proxy-version>
         <asm.version>4.1</asm.version>
         <asm.bundle.version>3.3.1_1</asm.bundle.version>
+        <drools.bundle.version>5.5.0.Final_2</drools.bundle.version>
+        <mvel.bundle.version>2.1.3.Final</mvel.bundle.version>
         <bndlib-version>1.43.0</bndlib-version>
         <blueprint-web-version>1.0.0</blueprint-web-version>
         <brew-version>0.2.11</brew-version>
@@ -137,13 +139,12 @@
         <commons-pool-version>1.5.4_3</commons-pool-version>
         <commons-httpclient-version>3.1</commons-httpclient-version>
         <cxf-version>2.7.0.redhat-${full-perfectus-build}</cxf-version>
-        <curator.version>2.0.0-incubating</curator.version>
-        <depends-maven-plugin.version>1.2</depends-maven-plugin.version>
+        <curator.version>2.3.0</curator.version>
         <drools-camel-artifactId>kie-camel</drools-camel-artifactId>
         <drools-camel-groupId>org.kie</drools-camel-groupId>
         <drools-spring-artifactId>kie-spring</drools-spring-artifactId>
         <drools-spring-groupId>org.kie</drools-spring-groupId>
-        <drools-version>6.0.0.Beta5</drools-version>
+        <drools-version>6.0.0.Final</drools-version>
 <!--
         <drools-camel-artifactId>drools-camel</drools-camel-artifactId>
         <drools-camel-groupId>org.drools</drools-camel-groupId>
@@ -159,30 +160,32 @@
         <felix-configadmin-version>1.4.0.redhat-${full-perfectus-build}</felix-configadmin-version>
         <felix-eventadmin-version>1.3.0.redhat-${full-perfectus-build}</felix-eventadmin-version>
         <felix-fileinstall-version>3.3.11.redhat-${full-perfectus-build}</felix-fileinstall-version>
-        <felix-utils-version>1.2.1.redhat-${full-perfectus-build}</felix-utils-version>
+        <felix-gogo-version>0.11.0.redhat-${full-perfectus-build}</felix-gogo-version>
+        <felix-metatype-version>1.0.8</felix-metatype-version>
         <felix-resolver-version>1.0.0</felix-resolver-version>
         <felix-scr-version>1.8.0.redhat-${full-perfectus-build}</felix-scr-version>
         <felix-scr-plugin-version>1.15.0</felix-scr-plugin-version>
         <felix-scr-annotations-version>1.9.6</felix-scr-annotations-version>
         <felix-scr-ds-annotations-version>1.2.4</felix-scr-ds-annotations-version>
-        <felix-gogo-version>0.11.0.redhat-${full-perfectus-build}</felix-gogo-version>
+        <felix-utils-version>1.2.1.redhat-${full-perfectus-build}</felix-utils-version>
         <fuse-cdc-version>1.1.0</fuse-cdc-version>
         <guava-version>14.0.1</guava-version>
         <guava.osgi.version.clean>13.0.1</guava.osgi.version.clean>
         <hadoop-version>1.2.1</hadoop-version>
         <hawtbuf-version>1.9</hawtbuf-version>
         <hawtdispatch-version>1.18</hawtdispatch-version>
-        <hawtio-version>1.2-M-redhat-93</hawtio-version>
+        <hawtio-version>1.2-M-redhat-123</hawtio-version>
         <hawtio-swagger-version>1.0.2</hawtio-swagger-version>
-        <jackson-version>1.9.10</jackson-version>
+        <jackson-version>1.9.12</jackson-version>
         <jackson-2-version>2.3.0-rc1</jackson-2-version>
         <jackson-module-scala-version>2.1.5_2</jackson-module-scala-version>
+        <jansi-version>1.11</jansi-version>
         <jasypt-version>1.9.0</jasypt-version>
         <jasypt-smx-version>1.9.0_1</jasypt-smx-version>
         <jaxb-api-version>2.1</jaxb-api-version>
         <jaxb-version>2.1.13</jaxb-version>
-        <jclouds-version>1.6.1-incubating</jclouds-version>
-        <jclouds-karaf-version>1.6.1-incubating</jclouds-karaf-version>
+        <jclouds-version>1.6.2-incubating</jclouds-version>
+        <jclouds-karaf-version>1.6.2-incubating</jclouds-karaf-version>
         <jclouds.osgi.version.clean>${jclouds-version}</jclouds.osgi.version.clean>
         <jersey-version>1.12</jersey-version>
         <jettison.version>1.3.1</jettison.version>
@@ -190,15 +193,15 @@
         <jetty-plugin-groupId>org.mortbay.jetty</jetty-plugin-groupId>
         <jetty-plugin-version>8.1.9.v20130131</jetty-plugin-version>
         <jetty-version>8.1.9.v20130131</jetty-version>
-        <jgit.version>3.0.0.201306101825-r</jgit.version>
+        <jgit.version>3.1.0.201310021548-r</jgit.version>
         <jledit.version>0.2.1</jledit.version>
-        <jolokia-version>1.1.4</jolokia-version>
+        <jolokia-version>1.1.5</jolokia-version>
         <jms-1.1-version>1.1.1</jms-1.1-version>
         <jna-version>3.3.0</jna-version>
         <jna-bundle-version>1.1</jna-bundle-version>
         <jsch-smx-version>0.1.48_1</jsch-smx-version>
         <json4s-version>3.2.4_1</json4s-version>
-        <junit-version>4.10</junit-version>
+        <junit-version>4.11</junit-version>
         <karaf-version>2.3.0.redhat-${full-perfectus-build}</karaf-version>
         <libvirt-version>0.4.6</libvirt-version>
         <libvirt-bundle-version>1.1</libvirt-bundle-version>
@@ -206,35 +209,27 @@
         <log4j-version>1.2.16</log4j-version>
         <logback-version>1.0.0</logback-version>
         <maven-version>3.0.3</maven-version>
-        <maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
-        <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
-        <maven-bundle-plugin-version>2.3.4</maven-bundle-plugin-version>
         <maven-fab-plugin-version>1.16</maven-fab-plugin-version>
-        <maven-jar-plugin-version>2.4</maven-jar-plugin-version>
-        <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
-        <maven-war-plugin-version>2.3</maven-war-plugin-version>
         <mina-version>2.0.7</mina-version>
-        <mongo-java-driver-version>2.7.3</mongo-java-driver-version>
-        <mvel-version>2.1.4.Final</mvel-version>
-        <mvnplugins-version>1.14</mvnplugins-version>
+        <mongo-java-driver-version>2.11.3</mongo-java-driver-version>
+        <mvel-version>2.1.7.Final</mvel-version>
         <openshift.client.version>2.4.2-ea-fuse</openshift.client.version>
         <openshift.client.groupId>org.fusesource.fabric.openshift</openshift.client.groupId>
         <ops4j-base.version>1.4.0</ops4j-base.version>
         <ops4j-pax-swissbox-bnd.version>1.6.0</ops4j-pax-swissbox-bnd.version>
         <ops4j-pax-swissbox-property.version>1.6.0</ops4j-pax-swissbox-property.version>
         <ops4j-pax-swissbox-optional-jcl.version>1.6.0</ops4j-pax-swissbox-optional-jcl.version>
-        <ops4j-pax-web-version>3.0.2</ops4j-pax-web-version>
+        <ops4j-pax-web-version>3.0.4</ops4j-pax-web-version>
         <org.apache.servicemix.bundles.jzlib.version>1.0.7_1</org.apache.servicemix.bundles.jzlib.version>
         <osgi-version>5.0.0</osgi-version>
         <osgi-compendium-version>4.3.1</osgi-compendium-version>
         <osgi-enterprise-version>5.0.0</osgi-enterprise-version>
         <pax-exam-version>2.3.1</pax-exam-version>
-        <pax.logging.version>1.7.0</pax.logging.version>
+        <pax.logging.version>1.7.1</pax.logging.version>
         <pax-runner-version>1.7.6</pax-runner-version>
         <pax.url.version>1.3.6</pax.url.version>
         <pax.url.mvn.version>${pax.url.version}</pax.url.mvn.version>
         <pax.url.mvn.commons.version>${pax.url.version}</pax.url.mvn.commons.version>
-        <qpid-jms-version>0.22</qpid-jms-version>
         <quartz-version>1.8.5_1</quartz-version>
         <reflections-version>0.9.8_1</reflections-version>
         <rrd4j-version>2.0.7</rrd4j-version>
@@ -256,14 +251,12 @@
         <slf4j-version>1.6.6</slf4j-version>
         <spring-osgi-version>1.2.1</spring-osgi-version>
         <spring-version>3.2.4.RELEASE</spring-version>
-        <sshd-version>0.8.0</sshd-version>
+        <sshd-version>0.9.0</sshd-version>
         <sshj.version>0.7.0</sshj.version>
-        <surefire-version>2.12</surefire-version>
         <swagger-version>1.3.0_1</swagger-version>
         <tinybundles-version>1.0.0</tinybundles-version>
         <vertx-version>2.0.2-final</vertx-version>
         <wagon-webdav-plugin-version>1.0-beta-7</wagon-webdav-plugin-version>
-        <war-plugin-version>2.1.1</war-plugin-version>
         <wildfly-version>8.0.0.Beta1</wildfly-version>
         <xalan.version>2.7.1</xalan.version>
         <xbean-version>3.12</xbean-version>
@@ -272,8 +265,9 @@
         <xml.api.version>2.11.0-20110622</xml.api.version>
         <zookeeper-version>3.4.5</zookeeper-version>
 
-        <activemqcpp.version>3.8.1</activemqcpp.version>
+        <activemqcpp.version>3.8.2</activemqcpp.version>
         <activemqnms.version>1.6.1</activemqnms.version>
+        <qpid-jms-version>0.24</qpid-jms-version>
 
         <felix.obr.version>1.6.6</felix.obr.version>
 
@@ -284,7 +278,7 @@
 
         <!-- Geronimo -->
         <geronimo-annotation.version>1.1.1</geronimo-annotation.version>
-        <geronimo-connector.version>2.1.3</geronimo-connector.version>
+        <geronimo-connector.version>3.1.1</geronimo-connector.version>
         <geronimo-j2ee-connector.version>2.0.0</geronimo-j2ee-connector.version>
         <geronimo-j2ee-management.version>1.0.1</geronimo-j2ee-management.version>
         <geronimo-jaxws.version>1.0</geronimo-jaxws.version>
@@ -311,15 +305,14 @@
         <dom4j.bundle.version>1.6.1_2</dom4j.bundle.version>
         <fastinfoset.bundle.version>1.2.7_3</fastinfoset.bundle.version>
         <jaxb.api.version>2.2</jaxb.api.version>
-        <jaxb-impl.bundle.version>2.2.1.1_1</jaxb-impl.bundle.version>
+        <jaxb-impl.bundle.version>2.2.1.1_2</jaxb-impl.bundle.version>
         <jaxp-ri.bundle.version>1.4.4_2</jaxp-ri.bundle.version>
         <jdt-core.bundle.version>3.2.3_4</jdt-core.bundle.version>
         <jdom.bundle.version>1.1_4</jdom.bundle.version>
         <jetty6.bundle.version>6.1.26_3</jetty6.bundle.version>
-        <jruby.version>1.7.5</jruby.version>
+        <jruby.version>1.7.6</jruby.version>
         <josql.bundle.version>1.5_4</josql.bundle.version>
         <jsmpp.bundle.version>2.1.0_3</jsmpp.bundle.version>
-        <mvel.bundle.version>2.1.3.Final</mvel.bundle.version>
         <opensaml.bundle.version>2.4.1_1</opensaml.bundle.version>
         <jodatime.bundle.version>1.5.2_2</jodatime.bundle.version>
         <oscore.bundle.version>2.2.4_4</oscore.bundle.version>
@@ -330,15 +323,16 @@
         <quartz.bundle.version>1.8.5_1</quartz.bundle.version>
         <rhino.bundle.version>1.7R2_3</rhino.bundle.version>
         <saaj-impl.bundle.version>1.3.9_2</saaj-impl.bundle.version>
-        <saxon.bundle.version>9.4.0.4_1-fuse</saxon.bundle.version>
+        <saxon.bundle.version>9.5.1-1_1</saxon.bundle.version>
         <snmp4j.bundle.version>1.8.1_4</snmp4j.bundle.version>
+        <validation-api-version>1.1.0.Final</validation-api-version>
         <velocity.bundle.version>1.7_3</velocity.bundle.version>
-        <wsdl4j.bundle.version>1.6.2_3</wsdl4j.bundle.version>
+        <wsdl4j.bundle.version>1.6.3_1</wsdl4j.bundle.version>
         <xalan.bundle.version>2.7.1_4</xalan.bundle.version>
         <xerces.bundle.version>2.9.1_4</xerces.bundle.version>
         <xmlbeans.bundle.version>2.5.0_2</xmlbeans.bundle.version>
         <xmlresolver.bundle.version>1.2_5</xmlresolver.bundle.version>
-        <xmlsec.bundle.version>1.5.2</xmlsec.bundle.version>
+        <xmlsec.bundle.version>1.5.6</xmlsec.bundle.version>
 
         <!-- ServiceMix legal shared resources -->
         <servicemix.legal.version>1.0</servicemix.legal.version>
@@ -346,17 +340,12 @@
         <!-- ODE -->
         <ode.version>1.3.5</ode.version>
 
-        <!-- Maven Plugins -->
-        <jbi-maven-plugin.version>4.5</jbi-maven-plugin.version>
-        <maven-antrun-plugin.version>1.6</maven-antrun-plugin.version>
-        <maven-bundle-plugin.version>2.1.0</maven-bundle-plugin.version>
-
         <!-- Other Dependencies -->
         <axiom.version>1.2.12</axiom.version>
-        <bouncycastle.version>140</bouncycastle.version>
+        <bouncycastle.version>1.49</bouncycastle.version>
         <commons-jexl.version>2.0.1</commons-jexl.version>
         <commons-logging.version>1.1.1</commons-logging.version>
-        <groovy.version>1.8.6</groovy.version>
+        <groovy.version>2.1.9</groovy.version>
         <javax.mail.version>1.4.5</javax.mail.version>
         <jaxp-ri.version>1.4.4</jaxp-ri.version>
         <xerces.version>2.11.0</xerces.version>
@@ -387,16 +376,6 @@
     </properties>
 
     <distributionManagement>
-        <repository>
-            <id>fusesource-nexus-staging</id>
-            <name>Fusesource Release Repository</name>
-            <url>http://repo.fusesource.com/nexus/service/local/staging/deploy/maven2</url>
-        </repository>
-        <snapshotRepository>
-            <id>fusesource-nexus-snapshots</id>
-            <name>Fusesource Nexus Snapshots</name>
-            <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
         <site>
             <id>website.fusesource.org</id>
             <name>website</name>
@@ -409,7 +388,7 @@
       <repository>
           <id>jboss-fs-public-repository-group</id>
           <name>JBoss FS Public Repository Group</name>
-          <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
+          <url>https://repo.fusesource.com/nexus/content/groups/public</url>
           <layout>default</layout>
           <releases>
               <enabled>true</enabled>
@@ -436,7 +415,7 @@
         <repository>
             <id>jboss.ea</id>
             <name>JBoss Community Early Access Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/ea</url>
+            <url>https://repo.fusesource.com/nexus/content/groups/ea</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -447,7 +426,7 @@
         <repository>
             <id>fusesource.m2-snapshot</id>
             <name>FuseSource Community Snapshot Repository</name>
-            <url>https://repository.jboss.org/nexus/content/groups/fs-public-snapshots</url>
+            <url>https://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -484,20 +463,9 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>fusesource.61</id>
-            <name>FuseSource Community Early Access 61 Repository</name>
-            <url>http://repo.fusesource.com/nexus/content/repositories/jboss-fuse-6.1.x</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-        <pluginRepository>
             <id>fusesource.ea</id>
             <name>FuseSource Community Early Access Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/groups/ea</url>
+            <url>https://repo.fusesource.com/nexus/content/groups/ea</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -510,134 +478,164 @@
     <dependencyManagement>
         <dependencies>
         
+            <!-- Commons -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils-version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api-version}</version>
+            </dependency>
+            
+            <!-- Eclipse -->
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit</artifactId>
+                <version>${jgit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit.http.server</artifactId>
+                <version>${jgit.version}</version>
+            </dependency>
+            
             <!-- Fabric -->
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-api</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-agent</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-boot-commands</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-camel</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-commands</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-core</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-core-agent-jclouds</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-core-agent-ssh</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-configadmin</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-dosgi</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-extender-listener</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-features-service</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-git</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-git-server</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
-                <artifactId>fabric-git-zkbridge</artifactId>
-                <version>${fabric.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-groups</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-jaas</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-ldap</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-maven-proxy</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-partition</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-redirect</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-utils</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-zookeeper</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-zookeeper-commands</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-zookeeper-spring</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric.itests</groupId>
+                <groupId>io.fabric8.itests</groupId>
                 <artifactId>fabric-itests-common</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
@@ -672,42 +670,42 @@
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric.virt</groupId>
-                <artifactId>org.fusesource.fabric.virt.commands</artifactId>
+                <groupId>io.fabric8.virt</groupId>
+                <artifactId>io.fabric8.virt.commands</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric.virt</groupId>
-                <artifactId>org.fusesource.fabric.virt.services</artifactId>
+                <groupId>io.fabric8.virt</groupId>
+                <artifactId>io.fabric8.virt.services</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric.virt.bundles</groupId>
-                <artifactId>org.fusesource.fabric.virt.bundles.jna</artifactId>
+                <groupId>io.fabric8.virt.bundles</groupId>
+                <artifactId>io.fabric8.virt.bundles.jna</artifactId>
                 <version>${jna-bundle-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric.virt.bundles</groupId>
-                <artifactId>org.fusesource.fabric.virt.bundles.libvirt</artifactId>
+                <groupId>io.fabric8.virt.bundles</groupId>
+                <artifactId>io.fabric8.virt.bundles.libvirt</artifactId>
                 <version>${libvirt-bundle-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
-                <artifactId>org.fusesource.fabric.karaf.branding</artifactId>
+                <groupId>io.fabric8</groupId>
+                <artifactId>io.fabric8.karaf.branding</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>process-fabric</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>watcher-core</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.fusesource.fabric</groupId>
+                <groupId>io.fabric8</groupId>
                 <artifactId>process-manager</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
@@ -715,6 +713,11 @@
                 <groupId>org.fusesource.patch</groupId>
                 <artifactId>patch-core</artifactId>
                 <version>${fabric.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource.jansi</groupId>
+                <artifactId>jansi</artifactId>
+                <version>${jansi-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fusesource.patch</groupId>
@@ -743,7 +746,7 @@
                 <artifactId>maven-util</artifactId>
                 <version>${fabric.version}</version>
             </dependency>
-            
+
             <!-- OSGi -->
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -784,6 +787,7 @@
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
+            
             <!-- LogBack -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -826,6 +830,7 @@
                 <artifactId>commons-logging-api</artifactId>
                 <version>1.1</version>
             </dependency>
+            
             <!-- Karaf version -->
             <dependency>
                 <groupId>org.apache.karaf.assemblies.features</groupId>
@@ -892,6 +897,12 @@
             <dependency>
                 <groupId>org.apache.karaf.admin</groupId>
                 <artifactId>org.apache.karaf.admin.management</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>org.apache.felix.bundlerepository</artifactId>
+                    </exclusion>
+                </exclusions>
                 <version>${karaf-version}</version>
             </dependency>
             <dependency>
@@ -920,13 +931,18 @@
             <!-- Others -->
             <dependency>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.utils</artifactId>
-                <version>${felix-utils-version}</version>
+                <artifactId>org.apache.felix.configadmin</artifactId>
+                <version>${felix-configadmin-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.resolver</artifactId>
-                <version>${felix-resolver-version}</version>
+                <artifactId>org.apache.felix.eventadmin</artifactId>
+                <version>${felix-eventadmin-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.fileinstall</artifactId>
+                <version>${felix-fileinstall-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
@@ -940,18 +956,18 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.fileinstall</artifactId>
-                <version>${felix-fileinstall-version}</version>
+                <artifactId>org.apache.felix.gogo.runtime</artifactId>
+                <version>${felix-gogo-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.configadmin</artifactId>
-                <version>${felix-configadmin-version}</version>
+                <artifactId>org.apache.felix.metatype</artifactId>
+                <version>${felix-metatype-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.eventadmin</artifactId>
-                <version>${felix-eventadmin-version}</version>
+                <artifactId>org.apache.felix.resolver</artifactId>
+                <version>${felix-resolver-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
@@ -970,8 +986,14 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.gogo.runtime</artifactId>
-                <version>${felix-gogo-version}</version>
+                <artifactId>org.apache.felix.utils</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.osgi</groupId>
+                        <artifactId>org.osgi.compendium</artifactId>
+                    </exclusion>
+                </exclusions>
+                <version>${felix-utils-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasypt</groupId>
@@ -983,7 +1005,7 @@
                 <artifactId>pax-url-mvn</artifactId>
                 <version>${pax.url.version}</version>
             </dependency>
-        
+
             <!-- Equinox -->
             <dependency>
                 <groupId>org.eclipse.osgi</groupId>
@@ -1170,6 +1192,11 @@
                 <version>${asm.bundle.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
+                <version>${jasypt-smx-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.servicemix.specs</groupId>
                 <artifactId>org.apache.servicemix.specs.jsr311-api-1.1.1</artifactId>
                 <version>${servicemix-specs-version}</version>
@@ -1325,18 +1352,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-scr-plugin</artifactId>
-                    <version>${felix-scr-plugin-version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
     <modules>
         <module>common-util</module>
         <module>maven-util</module>
@@ -1356,7 +1371,6 @@
                 <module>bai</module>
                 <module>components</module>
                 <module>esb</module>
-                <module>fmc</module>
                 <module>patch</module>
                 <module>security</module>
                 <module>quickstarts</module>
@@ -1375,7 +1389,7 @@
                 <module>patch</module>
             </modules>
         </profile>
-        
+
         <profile>
             <id>distro</id>
             <modules>
@@ -1386,7 +1400,7 @@
         <profile>
             <id>hawtio-snapshot</id>
             <properties>
-                <hawtio-version>1.2-SNAPSHOT</hawtio-version>
+                <hawtio-version>1.3-SNAPSHOT</hawtio-version>
             </properties>
         </profile>
 

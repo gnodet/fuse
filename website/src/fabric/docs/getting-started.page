@@ -249,7 +249,7 @@ sort_info: 10
       Notice: You cannot use Karaf 2.2.5 as it has an issue, that is being fixed in 2.2.6  
 
     pre
-      | karaf@root> features:addUrl mvn:org.fusesource.fabric/fuse-fabric/#{project_version}/xml/features
+      | karaf@root> features:addUrl mvn:io.fabric8/fuse-fabric/#{project_version}/xml/features
       | karaf@root> features:install fabric-boot-commands
 
     :&markdown
@@ -260,7 +260,7 @@ sort_info: 10
       In the "etc/org.ops4j.pax.url.mvn.cfg" file add the following entries to the "org.ops4j.pax.url.mvn.repositories" key:
 
     pre
-      | http://repo.fusesource.com/nexus/content/repositories/snapshots@snapshots, \
-      | http://repo.fusesource.com/nexus/content/groups/public
+      | https://repo.fusesource.com/nexus/content/repositories/snapshots@snapshots, \
+      | https://repo.fusesource.com/nexus/content/groups/public
 
 

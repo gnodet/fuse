@@ -25,11 +25,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.fusesource.fabric</groupId>
+    <groupId>io.fabric8</groupId>
     <artifactId>fabric-project</artifactId>
     <packaging>pom</packaging>
     
-    <name>Fuse Fabric :: Project</name>
+    <name>Fabric8 :: Project</name>
 
     <licenses>
       <license>
@@ -61,7 +61,6 @@
         <module>fabric-git</module>
         <module>fabric-git-hawtio</module>
         <module>fabric-git-server</module>
-        <module>fabric-git-zkbridge</module>
         <module>fabric-groups</module>
         <module>fabric-itests</module>
         <module>fabric-jaas</module>
@@ -72,8 +71,10 @@
         <module>fabric-redirect</module>
         <module>fabric-utils</module>
         <module>fabric-web</module>
+        <module>fabric-zeroconf</module>
         <module>fabric-zookeeper</module>
         <module>fabric-zookeeper-spring</module>
+        <module>fabric-zookeeper-commands</module>
         
         <!--
         TODO disabled until they work in 2.12 of camel
@@ -100,8 +101,6 @@
                 <module>fabric-osgimetadata</module>
                 <module>fabric-scala</module>
                 <module>fabric-webapp-agent</module>
-                <module>fabric-zeroconf</module>
-                <module>fabric-zookeeper-commands</module>
                 <module>watcher-blueprint-web</module>
                 <module>watcher-core</module>
                 <module>watcher-dynamic-jaxb</module>

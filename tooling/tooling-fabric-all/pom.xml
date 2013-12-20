@@ -26,15 +26,15 @@
     <version>7.3.0.redhat-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.fusesource.fabric</groupId>
+  <groupId>io.fabric8</groupId>
   <artifactId>tooling-fabric-all</artifactId>
   <packaging>bundle</packaging>
 
-  <name>FuseSource :: Tooling :: Fabric All</name>
+  <name>Fuse :: Tooling :: Fabric All</name>
 
   <properties>
     <fuse.osgi.export>
-      org.fusesource.fabric*;version=${fabric.version},
+      io.fabric*;version=${fabric.version},
       org.apache.zookeeper*;version=${zookeeper-version},
       org.apache.curator.*;version=${curator.version}
     </fuse.osgi.export>
@@ -46,6 +46,7 @@
       !sun.misc,
       !org.xml.*,
       !org.w3c.dom*,
+      !org.bouncycastle*,
       !javax.xml*,
       !junit*,
       !java*,
@@ -72,50 +73,52 @@
       !com.google.inject.internal.asm.util*,
       !groovy.*,
       !org.jruby*,
+      !org.osgi.service.obr*,
       !org.codehaus.groovy.*,
       org.osgi.service.cm;version="[1.3,2)"
     </fuse.osgi.import.before.defaults>
     <fuse.osgi.embed.dependency>*;scope=compile|runtime;inline=false;groupId=!org.bouncycastle|org.osgi|org.slf4j|org.apache.jclouds|org.apache.jclouds.driver|org.apache.jclouds.karaf|org.apache.jclouds.labs.representations|org.apache.jclouds.labs.management|org.apache.jclouds.karaf</fuse.osgi.embed.dependency>
     <fuse.osgi.embed.transitive>true</fuse.osgi.embed.transitive>
+    <fuse.osgi.bundle.name>Fuse Fabric Tooling Plugin</fuse.osgi.bundle.name>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>fabric-client</artifactId>
       <version>${fabric.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>fabric-api</artifactId>
       <version>${fabric.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>fabric-core</artifactId>
       <version>${fabric.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>fabric-zookeeper</artifactId>
       <version>${fabric.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>fabric-core-agent-ssh</artifactId>
       <version>${fabric.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>fabric-core-agent-jclouds</artifactId>
       <version>${fabric.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.fabric</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>tooling-jclouds-all</artifactId>
       <version>${fabric.version}</version>
       <scope>provided</scope>

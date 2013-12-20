@@ -28,12 +28,12 @@
     <groupId>org.fusesource.examples</groupId>
     <artifactId>fabric-cxf-demo-server</artifactId>
     <packaging>bundle</packaging>
-    <name>[TODO]${project.artifactId}</name>
-    <description>Fuse Fabric :: Simple Fabric CXF Demo :: Server</description>
+    <name>${project.artifactId}</name>
+    <description>Fabric8 :: Simple Fabric CXF Demo :: Server</description>
 
     <properties>
         <felix-plugin.version>2.1.0</felix-plugin.version>
-        <fuse.osgi.export>org.fusesource.fabric.demo.cxf.server*;-noimport:=true</fuse.osgi.export>
+        <fuse.osgi.export>io.fabric8.demo.cxf.server*;-noimport:=true</fuse.osgi.export>
         <fuse.osgi.split.pkg />
         <fuse.osgi.embed.dependency />
         <fuse.osgi.import.pkg>*</fuse.osgi.import.pkg>
@@ -42,7 +42,7 @@
     <dependencies>
         <dependency>
             <groupId>org.fusesource.examples</groupId>
-            <artifactId>fabric-cxf-demo-client</artifactId>
+            <artifactId>fabric-cxf-demo-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -17,16 +17,17 @@
   -->
 <features name="fabric-cxf-demo-${project.version}">
     <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
-    <repository>mvn:org.fusesource.fabric/fuse-fabric/${project.version}/xml/features</repository>
+    <repository>mvn:io.fabric8/fuse-fabric/${project.version}/xml/features</repository>
 
     <feature name="fabric-cxf-demo-server" version="${project.version}" resolver="(obr)">
         <feature>fabric-cxf</feature>
-        <bundle>mvn:org.fusesource.examples/fabric-cxf-demo-client/${pom.version}</bundle>
+        <bundle>mvn:org.fusesource.examples/fabric-cxf-demo-common/${pom.version}</bundle>
         <bundle>mvn:org.fusesource.examples/fabric-cxf-demo-server/${pom.version}</bundle>
     </feature>
 
     <feature name="fabric-cxf-demo-client" version="${project.version}" resolver="(obr)">
         <feature>fabric-cxf</feature>
+        <bundle>mvn:org.fusesource.examples/fabric-cxf-demo-common/${pom.version}</bundle>
         <bundle>mvn:org.fusesource.examples/fabric-cxf-demo-client/${pom.version}</bundle>
     </feature>
 

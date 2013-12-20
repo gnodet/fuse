@@ -6,7 +6,7 @@ First you'll need a vanilla 2.2.x Karaf then install Fabric into it along with C
 Install Fabric and Camel
 ------------------------
 
-    features:addUrl mvn:org.fusesource.fabric/fuse-fabric/1.1-SNAPSHOT/xml/features
+    features:addUrl mvn:io.fabric8/fuse-fabric/1.1-SNAPSHOT/xml/features
     features:install fabric-bundle
 
 To install Spring DM support
@@ -20,7 +20,7 @@ Install Camel for shared camel tests...
 
 You'll need to make sure you have the Fuse repo on your "org.ops4j.pax.url.mvn.repositories" property to be able to install the Fuse camel feature...
 
-* http://repo.fusesource.com/nexus/content/groups/public
+* https://repo.fusesource.com/nexus/content/groups/public
 
 Using a plain jar as a FAB
 --------------------------
@@ -30,7 +30,7 @@ and &lt;scope&gt;provided&lt;/scope&gt; for shared dependencies then just prefix
 
 The following example installs the [fab-sample-camel-blueprint-share sample jar](https://github.com/fusesource/fabric/tree/master/fab/tests/fab-sample-camel-blueprint-share)
 
-    osgi:install fab:mvn:org.fusesource.fabric.fab.tests/fab-sample-camel-blueprint-share/1.1-SNAPSHOT
+    osgi:install fab:mvn:io.fabric8.fab.tests/fab-sample-camel-blueprint-share/1.1-SNAPSHOT
 
 now start it and you're good to go!
 

@@ -19,15 +19,13 @@
     <fileSets>
         <!-- Copy over the examples with filtering -->
         <fileSet>
-            <directory>../../quickstarts</directory>
+            <directory>../../../quickstarts</directory>
             <outputDirectory>/quickstarts</outputDirectory>
             <excludes>
                 <exclude>**/target/</exclude>
                 <exclude>**/target/*</exclude>
             </excludes>
             <lineEnding>unix</lineEnding>
-            <fileMode>0644</fileMode>
-            <directoryMode>0775</directoryMode>
         </fileSet>
     </fileSets>
 </component>

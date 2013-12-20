@@ -37,7 +37,7 @@
           org.fusesource.insight.elasticsearch;version=${fabric.version}
       </fuse.osgi.export>
       <fuse.osgi.private.pkg>
-          org.apache.lucene*,
+          org.apache.lucene*;-split-package:=merge-first,
           org.tartarus*,
           org.ops4j.peaberry*,
           org.fusesource.insight.elasticsearch.impl
@@ -51,11 +51,11 @@
 
   <dependencies>
       <dependency>
-          <groupId>org.fusesource.fabric</groupId>
+          <groupId>io.fabric8</groupId>
           <artifactId>fabric-groups</artifactId>
       </dependency>
       <dependency>
-          <groupId>org.fusesource.fabric</groupId>
+          <groupId>io.fabric8</groupId>
           <artifactId>fabric-zookeeper</artifactId>
       </dependency>
       <dependency>
@@ -124,7 +124,6 @@
       <dependency>
           <groupId>javax.servlet</groupId>
           <artifactId>servlet-api</artifactId>
-          <version>${servlet-api-version}</version>
           <scope>provided</scope>
       </dependency>
 

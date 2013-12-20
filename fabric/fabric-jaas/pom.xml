@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.fusesource.fabric</groupId>
+        <groupId>io.fabric8</groupId>
         <artifactId>fabric-project</artifactId>
         <version>7.3.0.redhat-SNAPSHOT</version>
     </parent>
@@ -26,24 +26,29 @@
     <artifactId>fabric-jaas</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Fuse Fabric :: JAAS</name>
+    <name>Fabric8 :: JAAS</name>
 
     <properties>
       <fuse.osgi.import>
+      org.apache.felix.gogo.commands;resolution:=optional,
+      org.apache.felix.service.command;resolution:=optional,
       org.apache.karaf.jaas.config,
       org.apache.karaf.jaas.modules,
       org.apache.karaf.jaas.modules.encryption,
       org.apache.karaf.jaas.modules.properties,
-      org.apache.felix.service.command,
       *
       </fuse.osgi.import>
       <fuse.osgi.export>
-          org.fusesource.fabric.jaas
-        </fuse.osgi.export>
+          io.fabric8.jaas
+      </fuse.osgi.export>
         <fuse.osgi.private.pkg>
-            org.apache.felix.utils.properties
+            org.apache.felix.utils.properties;-split-package:=merge-first
         </fuse.osgi.private.pkg>
-        <fuse.osgi.service.component>OSGI-INF/*</fuse.osgi.service.component>
+        <fuse.osgi.service.component>
+            <!-- Use explicit file locations because there is no support for wildcard resource discovery in non-osgi environments -->
+            OSGI-INF/io.fabric8.jaas.FabricJaasRealm.xml,
+            OSGI-INF/io.fabric8.jaas.ZookeeperBackingEngineFactory.xml
+        </fuse.osgi.service.component>
     </properties>
 
     <dependencies>
@@ -52,15 +57,15 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.fusesource.fabric</groupId>
+            <groupId>io.fabric8</groupId>
             <artifactId>fabric-zookeeper</artifactId>
         </dependency>
       <dependency>
-        <groupId>org.fusesource.fabric</groupId>
+        <groupId>io.fabric8</groupId>
         <artifactId>fabric-api</artifactId>
       </dependency>
         <dependency>
-            <groupId>org.fusesource.fabric</groupId>
+            <groupId>io.fabric8</groupId>
             <artifactId>fabric-core</artifactId>
         </dependency>
         <dependency>
@@ -68,13 +73,23 @@
             <artifactId>org.apache.felix.utils</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.karaf.jaas</groupId>
+            <artifactId>org.apache.karaf.jaas.boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.jaas</groupId>
+            <artifactId>org.apache.karaf.jaas.modules</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt</artifactId>
-            <version>${jasypt-version}</version>
         </dependency>
+        
+        <!-- Provided Dependencies -->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -82,8 +97,16 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Gravia-Enabled>true</Gravia-Enabled>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.9.0</version>
                 <executions>
                     <execution>
                         <id>generate-scr-scrdescriptor</id>

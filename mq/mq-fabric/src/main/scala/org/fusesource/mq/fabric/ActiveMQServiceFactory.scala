@@ -42,9 +42,9 @@ import org.apache.activemq.network.DiscoveryNetworkConnector
 import collection.mutable
 import org.apache.curator.framework.CuratorFramework
 import org.fusesource.mq.fabric.FabricDiscoveryAgent.ActiveMQNode
-import org.fusesource.fabric.groups.{Group, GroupListener}
+import io.fabric8.groups.{Group, GroupListener}
 import GroupListener.GroupEvent
-import org.fusesource.fabric.api.FabricService
+import io.fabric8.api.FabricService
 import org.apache.xbean.classloader.MultiParentClassLoader
 import org.osgi.util.tracker.{ServiceTrackerCustomizer, ServiceTracker}
 
@@ -54,12 +54,24 @@ object ActiveMQServiceFactory {
 
   PropertyEditorManager.registerEditor(classOf[URI], classOf[URIEditor])
 
+  def info(str: String) = if (LOG.isInfoEnabled) {
+    LOG.info(str)
+  }
+
   def info(str: String, args: AnyRef*) = if (LOG.isInfoEnabled) {
     LOG.info(String.format(str, args:_*))
   }
 
+  def debug(str: String) = if (LOG.isDebugEnabled) {
+    LOG.debug(str)
+  }
+
   def debug(str: String, args: AnyRef*) = if (LOG.isDebugEnabled) {
     LOG.debug(String.format(str, args:_*))
+  }
+
+  def warn(str: String) = if (LOG.isWarnEnabled) {
+    LOG.warn(str)
   }
 
   def warn(str: String, args: AnyRef*) = if (LOG.isWarnEnabled) {
@@ -100,8 +112,11 @@ object ActiveMQServiceFactory {
           LOG.info("Adding network connector " + name)
           val nc = new DiscoveryNetworkConnector(new URI("fabric:" + name))
           nc.setName("fabric-" + name)
-          // copy properties as IntrospectionSupport removes them
+
           val network_properties = new mutable.HashMap[String, Object]()
+          //use default credentials for network connector (if none was specified)
+          network_properties.put("network.userName", "admin")
+          network_properties.put("network.password", properties.getProperty("zookeeper.password"))
           network_properties.putAll(properties.asInstanceOf[java.util.Map[String, String]])
           IntrospectionSupport.setProperties(nc, network_properties, "network.")
           broker.addNetworkConnector(nc)
@@ -226,65 +241,69 @@ class ActiveMQServiceFactory(bundleContext: BundleContext) extends ManagedServic
     var last_modified:Long = -1
 
     def updateCurator(curator: CuratorFramework) = {
-      if (discoveryAgent != null) {
-        discoveryAgent.stop()
-        discoveryAgent = null
-        if (started.compareAndSet(true, false)) {
-          info("Lost zookeeper service for broker %s, stopping the broker.", name)
-          stop()
-          waitForStop()
-          return_pool(this)
-          pool_enabled = false
-        }
-      }
-      waitForStop()
-      if (curator != null) {
-        info("Found zookeeper service for broker %s.", name)
-        discoveryAgent = new FabricDiscoveryAgent
-        discoveryAgent.setAgent(System.getProperty("karaf.name"))
-        discoveryAgent.setId(name)
-        discoveryAgent.setGroupName(group)
-        discoveryAgent.setCurator(curator)
-        if (replicating) {
-          discoveryAgent.start()
-          if (started.compareAndSet(false, true)) {
-            info("Replicating broker %s is starting.", name)
-            start()
+      if (!standalone) {
+        this.synchronized {
+          if (discoveryAgent != null) {
+            discoveryAgent.stop()
+            discoveryAgent = null
+            if (started.compareAndSet(true, false)) {
+              info("Lost zookeeper service for broker %s, stopping the broker.", name)
+              stop()
+              waitForStop()
+              return_pool(this)
+              pool_enabled = false
+            }
           }
-        } else {
-          discoveryAgent.getGroup.add(new GroupListener[ActiveMQNode]() {
-            def groupEvent(group: Group[ActiveMQNode], event: GroupEvent) {
-              if (event.equals(GroupEvent.CONNECTED) || event.equals(GroupEvent.CHANGED)) {
-                if (discoveryAgent.getGroup.isMaster(name)) {
-                  if (started.compareAndSet(false, true)) {
-                    if (take_pool(ClusteredConfiguration.this)) {
-                      info("Broker %s is now the master, starting the broker.", name)
-                      start()
+          waitForStop()
+          if (curator != null) {
+            info("Found zookeeper service for broker %s.", name)
+            discoveryAgent = new FabricDiscoveryAgent
+            discoveryAgent.setAgent(System.getProperty("karaf.name"))
+            discoveryAgent.setId(name)
+            discoveryAgent.setGroupName(group)
+            discoveryAgent.setCurator(curator)
+            if (replicating) {
+              discoveryAgent.start()
+              if (started.compareAndSet(false, true)) {
+                info("Replicating broker %s is starting.", name)
+                start()
+              }
+            } else {
+              discoveryAgent.getGroup.add(new GroupListener[ActiveMQNode]() {
+                def groupEvent(group: Group[ActiveMQNode], event: GroupEvent) {
+                  if (event.equals(GroupEvent.CONNECTED) || event.equals(GroupEvent.CHANGED)) {
+                    if (discoveryAgent.getGroup.isMaster(name)) {
+                      if (started.compareAndSet(false, true)) {
+                        if (take_pool(ClusteredConfiguration.this)) {
+                          info("Broker %s is now the master, starting the broker.", name)
+                          start()
+                        } else {
+                          update_pool_state()
+                          started.set(false)
+                        }
+                      }
                     } else {
-                      update_pool_state()
-                      started.set(false)
+                      if (started.compareAndSet(true, false)) {
+                        return_pool(ClusteredConfiguration.this)
+                        info("Broker %s is now a slave, stopping the broker.", name)
+                        stop()
+                      } else {
+                        if (event.equals(GroupEvent.CHANGED)) {
+                          info("Broker %s is slave", name)
+                          discoveryAgent.setServices(Array[String]())
+                        }
+                      }
                     }
-                  }
-                } else {
-                  if (started.compareAndSet(true, false)) {
-                    return_pool(ClusteredConfiguration.this)
-                    info("Broker %s is now a slave, stopping the broker.", name)
-                    stop()
                   } else {
-                    if (event.equals(GroupEvent.CHANGED)) {
-                      info("Broker %s is slave", name)
-                      discoveryAgent.setServices(Array[String]())
-                    }
+                    info("Disconnected from the group", name)
+                    discoveryAgent.setServices(Array[String]())
                   }
                 }
-              } else {
-                info("Disconnected from the group", name)
-                discoveryAgent.setServices(Array[String]())
-              }
+              })
+              info("Broker %s is waiting to become the master", name)
+              update_pool_state()
             }
-          })
-          info("Broker %s is waiting to become the master", name)
-          update_pool_state()
+          }
         }
       }
     }
@@ -384,6 +403,7 @@ class ActiveMQServiceFactory(bundleContext: BundleContext) extends ManagedServic
           }
         }
         // ok boot up the server..
+        info("booting up a broker from: " + config)
         server = createBroker(config, properties)
         // configure ports
         server._2.getTransportConnectors.foreach {
@@ -453,6 +473,10 @@ class ActiveMQServiceFactory(bundleContext: BundleContext) extends ManagedServic
         try {
           s._2.stop()
           s._2.waitUntilStopped()
+          if (!standalone || replicating) {
+            // clear out the services as we are no longer alive
+            discoveryAgent.setServices( Array[String]() )
+          }
           if (registerService) {
             osgiUnregister(s._2)
           }

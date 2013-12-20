@@ -17,6 +17,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+    <parent>
+      <groupId>org.jboss.quickstarts.fuse</groupId>
+      <artifactId>jboss-quickstarts-fuse-parent</artifactId>
+      <version>6.1.0.redhat-SNAPSHOT</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jboss.quickstarts.fuse</groupId>
@@ -25,6 +31,23 @@
     <packaging>bundle</packaging>
     <name>JBoss Fuse :: Examples :: JMS</name>
     <description>JMS Example</description>
+
+    <url>https://github.com/jboss-fuse/fuse/tree/master/quickstarts/jms</url>
+
+    <scm>
+      <connection>scm:git:git@github.com:jboss-fuse/fuse.git</connection>
+      <developerConnection>scm:git:git@github.com:jboss-fuse/fuse.git</developerConnection>
+      <url>https://github.com/jboss-fuse/fuse/tree/master/quickstarts/jms</url>
+    </scm>
+
+    <developers>
+      <developer>
+        <id>fuseteam</id>
+        <name>JBoss Fuse Development Team</name>
+        <organization>JBoss</organization>
+        <organizationUrl>http://jboss.org/</organizationUrl>
+      </developer>
+    </developers>
 
     <properties>
         <!-- Explicitly declaring the source encoding eliminates the following
@@ -88,7 +111,7 @@
         <repository>
             <id>fusesource.m2</id>
             <name>FuseSource Community Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
+            <url>https://repo.fusesource.com/nexus/content/groups/public</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -99,7 +122,7 @@
         <repository>
             <id>fusesource.ea</id>
             <name>FuseSource Community Early Access Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/groups/ea</url>
+            <url>https://repo.fusesource.com/nexus/content/groups/ea</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -113,7 +136,7 @@
         <pluginRepository>
             <id>fusesource.m2</id>
             <name>FuseSource Community Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
+            <url>https://repo.fusesource.com/nexus/content/groups/public</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -124,7 +147,7 @@
         <pluginRepository>
             <id>fusesource.ea</id>
             <name>FuseSource Community Early Access Release Repository</name>
-            <url>https://repository.jboss.org/nexus/content/groups/ea</url>
+            <url>https://repo.fusesource.com/nexus/content/groups/ea</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>

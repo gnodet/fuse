@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.fusesource.fabric</groupId>
+        <groupId>io.fabric8</groupId>
         <artifactId>fabric-project</artifactId>
         <version>7.3.0.redhat-SNAPSHOT</version>
     </parent>
@@ -30,11 +30,11 @@
     <artifactId>fabric-git</artifactId>
     <packaging>bundle</packaging>
 
-    <name>Fuse Fabric :: Git</name>
+    <name>Fabric8 :: Git</name>
 
     <properties>
         <fuse.osgi.export>
-            org.fusesource.fabric.git*;version=${fuse.osgi.version};-noimport:=true,
+            io.fabric8.git*;version=${fuse.osgi.version};-noimport:=true,
             org.eclipse.jgit*;-noimport:=true,
             org.gitective.core*;-noimport:=true,
         </fuse.osgi.export>
@@ -45,29 +45,30 @@
         <fuse.osgi.services.export>
         </fuse.osgi.services.export>
         <fuse.osgi.private.pkg>
-            org.fusesource.fabric.utils,
-            org.fusesource.fabric.git.internal
+            org.apache.felix.utils.properties;-split-package:=first,
+            io.fabric8.utils;-split-package:=first,
+            io.fabric8.git.internal
         </fuse.osgi.private.pkg>
         <fuse.osgi.require.bundle>
-            org.fusesource.fabric.fabric-git
+            io.fabric8.fabric-git
         </fuse.osgi.require.bundle>
         <fuse.osgi.service.component>
             <!-- Use explicit file locations because there is no support for wildcard resource discovery in non-osgi environments -->
-            OSGI-INF/org.fusesource.fabric.git.internal.CachingGitDataStore.xml,
-            OSGI-INF/org.fusesource.fabric.git.internal.FabricGitServiceImpl.xml,
-            OSGI-INF/org.fusesource.fabric.git.internal.GitMasterListener.xml
+            OSGI-INF/io.fabric8.git.internal.CachingGitDataStore.xml,
+            OSGI-INF/io.fabric8.git.internal.FabricGitServiceImpl.xml,
+            OSGI-INF/io.fabric8.git.internal.GitMasterListener.xml
         </fuse.osgi.service.component>
     </properties>
 
     <dependencies>
-
-        <!-- Git Library -->
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.utils</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>${jgit.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.gitective</groupId>
             <artifactId>gitective-core</artifactId>
@@ -79,14 +80,48 @@
               </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric-groups</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
 
+        <!-- Provided Dependencies -->
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.enterprise</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>${servlet-api-version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.ops4j.pax.web</groupId>
             <artifactId>pax-web-runtime</artifactId>
@@ -94,79 +129,14 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.fusesource.fabric</groupId>
-            <artifactId>fabric-groups</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.fusesource.fabric</groupId>
-            <artifactId>fabric-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.fusesource.fabric</groupId>
-            <artifactId>fabric-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.fusesource.fabric</groupId>
-            <artifactId>fabric-zookeeper</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.fusesource.fabric</groupId>
-            <artifactId>fabric-utils</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.scr.annotations</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-        </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging-api</artifactId>
-        </dependency>
-
-
         <!-- Testing -->
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.fusesource.fabric</groupId>
+            <groupId>io.fabric8</groupId>
             <artifactId>fabric-zookeeper-spring</artifactId>
             <scope>test</scope>
         </dependency>
@@ -175,6 +145,15 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Gravia-Enabled>true</Gravia-Enabled>
+                    </instructions>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>

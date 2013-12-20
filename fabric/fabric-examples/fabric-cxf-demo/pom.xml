@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.fusesource.fabric</groupId>
+        <groupId>io.fabric8</groupId>
         <artifactId>fabric-examples</artifactId>
         <version>7.3.0.redhat-SNAPSHOT</version>
     </parent>
@@ -29,30 +29,13 @@
     <artifactId>fabric-cxf-demo</artifactId>
     <packaging>pom</packaging>
     
-    <name>Fuse Fabric :: Examples :: CXF Demo</name>
+    <name>Fabric8 :: Examples :: CXF Demo</name>
 
     <modules>
+        <module>cxf-common</module>
         <module>cxf-client</module>
+        <module>cxf-demo-feature</module>
+        <module>cxf-server</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>all</id>
-            <modules>
-                <module>cxf-demo-feature</module>
-                <module>cxf-server</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>esb</id>
-            <modules>
-            </modules>
-        </profile>
-        <profile>
-            <id>amq</id>
-            <modules>
-            </modules>
-        </profile>
-    </profiles>
 
 </project>

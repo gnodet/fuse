@@ -30,7 +30,7 @@ To register this service (= Interfaces) into the OSGI registry, we use the follo
 
     <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-        <bean id="myService" class="org.fusesource.fabric.example.dosgi.impl.ServiceImpl"/>
+        <bean id="myService" class="io.fabric8.example.dosgi.impl.ServiceImpl"/>
 
         <service ref="myService" auto-export="interfaces">
             <service-properties>
@@ -47,7 +47,7 @@ During this process, Fabric will publish information in the Zookeeper registry. 
 In another bundle, we will create a Camel route where we will refer to this service using as key the name of the interface that we will lookup into
 the Zookeeper registry to find it and get locally a proxy object !
 
-<reference id="myService" interface="org.fusesource.fabric.example.dosgi.Service" availability="optional"/>
+<reference id="myService" interface="io.fabric8.example.dosgi.Service" availability="optional"/>
 
 <camelContext id="camel" trace="false" xmlns="http://camel.apache.org/schema/blueprint">
 
@@ -83,29 +83,18 @@ And run the following command in the console
 
     fabric:create --clean root
 
-4) Create a profile for the distributed service provider
 
-    fabric:profile-create --parents dosgi dosgi-provider
-    fabric:profile-edit --repositories mvn:org.fusesource.fabric.fabric-examples.fabric-camel-dosgi/features/${project.version}/xml/features dosgi-provider
-    fabric:profile-edit --features fabric-example-dosgi dosgi-provider
+4) Create a container and assign it the example-dosgi-camel.provider profile
 
-5) Create a profile for the distributed service consumer
+    fabric:container-create --profile example-dosgi-camel.provider --parent root dosgi-provider
 
-    fabric:profile-create --parents dosgi dosgi-camel
-    fabric:profile-edit --repositories mvn:org.fusesource.fabric.fabric-examples.fabric-camel-dosgi/features/${project.version}/xml/features dosgi-camel
-    fabric:profile-edit --features fabric-example-camel-dosgi dosgi-camel
+5) Create a container and assign it the example-dosgi-camel.consumer profile
 
-6) Create a container and assign it the dosgi-provider profile
+    fabric:container-create --profile example-dosgi-camel.consumer --parent root dosgi-camel
 
-    fabric:container-create --profile dosgi-provider --parent root dosgi-provider
+6) Check that the consumer routes and see the route info of consumer
 
-7) Create a container and assign it the dosgi-camel profile
-
-    fabric:container-create --profile dosgi-camel --parent root dosgi-camel
-
-8) Check that the consumer routes and see the route info of consumer
-
-    shell:command-watch fabric:container-connect dosgi-camel camel:route-info fabric-client
+    shell:watch fabric:container-connect dosgi-camel camel:route-info fabric-client
 
    The command above will automatically refresh the output every second.
 

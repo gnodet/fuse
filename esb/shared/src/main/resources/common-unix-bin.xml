@@ -39,7 +39,6 @@
               <exclude>karaf-manual*</exclude>
             </excludes>
             <fileMode>0644</fileMode>
-            <directoryMode>0775</directoryMode>
         </fileSet>
 
         <!-- Copy over bin/* scripts separately to get the correct file mode -->
@@ -74,6 +73,7 @@
             </includes>
             <lineEnding>unix</lineEnding>
             <fileMode>0644</fileMode>
+            <directoryMode>0644</directoryMode>
             <filtered>true</filtered>
         </fileSet>
 
@@ -91,7 +91,6 @@
             <outputDirectory>/licenses/</outputDirectory>
             <lineEnding>unix</lineEnding>
             <fileMode>0644</fileMode>
-            <directoryMode>0775</directoryMode>
         </fileSet>
 
         <!-- Copy over filtered resources -->
@@ -121,45 +120,6 @@
             <fileMode>0755</fileMode>
             <lineEnding>dos</lineEnding>
         </file>
-        <!--
-        <file>
-            <source>${basedir}/target/shared/bin/patch</source>
-            <outputDirectory>/bin/</outputDirectory>
-            <destName>patch</destName>
-            <fileMode>0755</fileMode>
-            <lineEnding>unix</lineEnding>
-        </file>
-        -->
-        <file>
-            <source>${basedir}/target/maven-shared-archive-resources/META-INF/NOTICE</source>
-            <outputDirectory>/</outputDirectory>
-            <destName>notices.txt</destName>
-            <fileMode>0644</fileMode>
-            <lineEnding>unix</lineEnding>
-        </file>
-        <file>
-            <source>${basedir}/target/maven-shared-archive-resources/META-INF/DEPENDENCIES</source>
-            <outputDirectory>/</outputDirectory>
-            <destName>dependencies.txt</destName>
-            <fileMode>0644</fileMode>
-            <lineEnding>unix</lineEnding>
-        </file>
-<!--
-        <file>
-            <source>${basedir}/target/maven-shared-archive-resources/META-INF/LICENSE</source>
-            <outputDirectory>/</outputDirectory>
-            <destName>LICENSE</destName>
-            <fileMode>0644</fileMode>
-            <lineEnding>unix</lineEnding>
-        </file>
-        <file>
-            <source>${basedir}/target/maven-shared-archive-resources/META-INF/NOTICE</source>
-            <outputDirectory>/</outputDirectory>
-            <destName>NOTICE</destName>
-            <fileMode>0644</fileMode>
-            <lineEnding>unix</lineEnding>
-        </file>
--->
     </files>
 
 </component>

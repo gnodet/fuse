@@ -19,29 +19,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>fabric-project</artifactId>
-        <groupId>org.fusesource.fabric</groupId>
+        <groupId>io.fabric8</groupId>
         <version>7.3.0.redhat-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.fusesource.fabric</groupId>
     <artifactId>fabric-jolokia</artifactId>
-    <version>7.3.0.redhat-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
-    <name>Fuse Fabric :: Jolokia</name>
+    <name>Fabric8 :: Jolokia</name>
 
     <properties>
         <fuse.osgi.export>
             org.jolokia.osgi.servlet;uses:="org.osgi.service.http,org.osgi.framework,javax.servlet";version="${jolokia-version}",
-            org.jolokia.restrictor;uses:="javax.management,javax.xml.parsers,org.w3c.dom,org.xml.sax";version="${jolokia-version}",
-            org.jolokia.util;version="${jolokia-version}",
-            org.fusesource.fabric.jolokia;version="${project.version}"
+            org.jolokia.restrictor;uses:="javax.management,javax.xml.parsers,org.w3c.dom,org.xml.sax";version="${jolokia-version}";-split-package:=first,
+            org.jolokia.util;version="${jolokia-version}";-split-package:=first,
+            io.fabric8.jolokia;version="${project.version}"
         </fuse.osgi.export>
         <fuse.osgi.import>
             org.jolokia.osgi.servlet;version="${jolokia-version}",
-            org.jolokia.restrictor;version="${jolokia-version}",
-            org.jolokia.util;version="${jolokia-version}",
+            org.jolokia.restrictor;version="${jolokia-version}";-split-package:=first,
+            org.jolokia.util;version="${jolokia-version}";-split-package:=first,
             org.osgi.framework;version="[1.0.0,2.0.0)",
             org.osgi.service.http;version="[1.0.0,2.0.0)";resolution:=optional,
             org.osgi.service.log;version="[1.0.0,2.0.0)",
@@ -49,11 +47,11 @@
             *
         </fuse.osgi.import>
         <fuse.osgi.private.pkg>
-            org.jolokia*,
+            org.jolokia*;-split-package:=first,
             org.json*,
-            org.fusesource.fabric.utils
+            io.fabric8.utils
         </fuse.osgi.private.pkg>
-        <fuse.osgi.activator>org.fusesource.fabric.jolokia.Activator</fuse.osgi.activator>
+        <fuse.osgi.activator>io.fabric8.jolokia.Activator</fuse.osgi.activator>
     </properties>
 
     <dependencies>
@@ -65,7 +63,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>${servlet-api-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -81,9 +78,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.fusesource.fabric</groupId>
+            <groupId>io.fabric8</groupId>
             <artifactId>fabric-utils</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

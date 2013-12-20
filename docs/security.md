@@ -2,7 +2,7 @@
 
 This section describes how authentication and authorization works in fabric and how zookeeper is secured from external access.
 
-Fabric containers are using JAAS for authentication and authorization. To make sure that all users, credentials and roles are shared between all containers and can be centrally managed, fabric is using the zookeeper to store user info.
+Fabric8 containers are using JAAS for authentication and authorization. To make sure that all users, credentials and roles are shared between all containers and can be centrally managed, fabric is using the zookeeper to store user info.
 JAAS will be used for the following cases:
 
 * SSH access
@@ -28,14 +28,14 @@ The users can be also managed after fabric has been created using the jaas comma
       Index Realm                Module Class
           1 karaf                org.apache.karaf.jaas.modules.properties.PropertiesLoginModule
           2 karaf                org.apache.karaf.jaas.modules.publickey.PublickeyLoginModule
-          3 karaf                org.fusesource.fabric.jaas.ZookeeperLoginModule
+          3 karaf                io.fabric8.jaas.ZookeeperLoginModule
 
 There are 3 JAAS realms all named karaf. You can choose which realm you want to manage by either specifying the index or the login module assigned to the realm:
 
       jaas:manage --index 3 --realm karaf
 
 or
-      jaas:manage --module org.fusesource.fabric.jaas.ZookeeperLoginModule --realm karaf
+      jaas:manage --module io.fabric8.jaas.ZookeeperLoginModule --realm karaf
 
 Then you can add, edit or delete users:
 

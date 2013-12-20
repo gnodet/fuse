@@ -17,6 +17,12 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+      <groupId>org.fusesource</groupId>
+      <artifactId>fuse-project</artifactId>
+      <version>7.3.0.redhat-SNAPSHOT</version>
+      <relativePath>../parent</relativePath>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.quickstarts.fuse</groupId>
     <artifactId>jboss-quickstarts-fuse-parent</artifactId>
@@ -25,6 +31,21 @@
     <name>JBoss Fuse Quickstarts Parent</name>
     <description>JBoss Fuse Quickstarts Parent</description>
     <url>http://www.jboss.org/products/fuse</url>
+
+    <scm>
+      <connection>scm:git:git@github.com:jboss-fuse/fuse.git</connection>
+      <developerConnection>scm:git:git@github.com:jboss-fuse/fuse.git</developerConnection>
+      <url>https://github.com/jboss-fuse/fuse/tree/master/quickstarts</url>
+    </scm>
+
+    <developers>
+      <developer>
+        <id>fuseteam</id>
+        <name>JBoss Fuse Development Team</name>
+        <organization>JBoss</organization>
+        <organizationUrl>http://jboss.org/</organizationUrl>
+      </developer>
+    </developers>
 
     <licenses>
         <license>

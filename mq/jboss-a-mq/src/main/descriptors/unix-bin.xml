@@ -145,7 +145,7 @@
             <lineEnding>unix</lineEnding>
         </file>
         <file>
-            <source>${basedir}/target/target/maven-shared-archive-resources/META-INF/DEPENDENCIES</source>
+            <source>${basedir}/target/META-INF/DEPENDENCIES</source>
             <outputDirectory>/</outputDirectory>
             <destName>mq_dependencies.txt</destName>
             <fileMode>0644</fileMode>
@@ -155,35 +155,6 @@
             <source>${basedir}/target/dependencies/unix/apache-activemq-${activemq-version}-bin.zip</source>
             <outputDirectory>extras</outputDirectory>
             <fileMode>0644</fileMode>
-        </file>
-        <file>
-            <source>${basedir}/target/dependencies/unix/qpid-amqp-1-0-client-jms-${qpid-jms-version}.jar</source>
-            <outputDirectory>extras</outputDirectory>
-            <fileMode>0644</fileMode>
-        </file>
-        <file>
-          <source>${basedir}/target/dependencies/unix/activemq-cpp-library-${activemqcpp.version}-src.zip
-          </source>
-          <outputDirectory>extras/cpp</outputDirectory>
-          <fileMode>0644</fileMode>
-        </file>
-        <file>
-          <source>${basedir}/target/dependencies/unix/activemq-cpp-library-${activemqcpp.version}-src.tar.gz
-          </source>
-          <outputDirectory>extras/cpp</outputDirectory>
-          <fileMode>0644</fileMode>
-        </file>
-        <file>
-          <source>${basedir}/target/dependencies/unix/Apache.NMS.ActiveMQ-${activemqnms.version}-bin.zip
-          </source>
-          <outputDirectory>extras/dotnet</outputDirectory>
-          <fileMode>0644</fileMode>
-        </file>
-        <file>
-          <source>${basedir}/target/dependencies/unix/Apache.NMS.ActiveMQ-${activemqnms.version}-src.zip
-          </source>
-          <outputDirectory>extras/dotnet</outputDirectory>
-          <fileMode>0644</fileMode>
         </file>
     </files>
 

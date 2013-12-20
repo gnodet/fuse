@@ -26,7 +26,7 @@
 
     <groupId>org.jboss.amq</groupId>
     <artifactId>jboss-a-mq</artifactId>
-    
+
     <name>JBoss A-MQ :: Binary Distribution</name>
 
        <prerequisites>
@@ -36,7 +36,7 @@
        <dependencies>
            <!-- Fabric Dependencies -->
            <dependency>
-               <groupId>org.fusesource.fabric</groupId>
+               <groupId>io.fabric8</groupId>
                <artifactId>fuse-fabric</artifactId>
                <version>${fabric.version}</version>
            </dependency>
@@ -63,17 +63,10 @@
                <version>${fuse.version}</version>
            </dependency>
            <dependency>
-               <groupId>org.fusesource.fabric</groupId>
+               <groupId>io.fabric8</groupId>
                <artifactId>fuse-fabric</artifactId>
                <version>${fabric.version}</version>
                <type>zip</type>
-           </dependency>
-
-           <dependency>
-               <groupId>org.jboss.amq</groupId>
-               <artifactId>mq-web-console</artifactId>
-               <version>${fuse.version}</version>
-               <type>war</type>
            </dependency>
 
            <dependency>
@@ -158,7 +151,7 @@
                                    <descriptor>mvn:org.apache.activemq/activemq-karaf/${activemq-version}/xml/features</descriptor>
                                    <descriptor>mvn:io.hawt/hawtio-karaf/${hawtio-version}/xml/features</descriptor>
                                    <descriptor>mvn:org.fusesource.patch/patch-features/${fabric.version}/xml/features</descriptor>
-                                   <descriptor>mvn:org.fusesource.fabric/fuse-fabric/${fabric.version}/xml/features</descriptor>
+                                   <descriptor>mvn:io.fabric8/fuse-fabric/${fabric.version}/xml/features</descriptor>
                                </descriptors>
                                <features>
                                    <feature>obr</feature>
@@ -175,7 +168,6 @@
                                    <feature>activemq-broker</feature>
                                    <feature>activemq-camel</feature>
                                    <feature>war</feature>
-                                   <feature>mq-web-console</feature>
                                    <feature>fabric-redirect</feature>
                                    <feature>hawtio</feature>
                                    <feature>patch</feature>
@@ -227,7 +219,7 @@
                            <configuration>
                                <artifactItems>
                                    <artifactItem>
-                                       <groupId>org.fusesource.fabric</groupId>
+                                       <groupId>io.fabric8</groupId>
                                        <artifactId>fuse-fabric</artifactId>
                                        <type>zip</type>
                                        <outputDirectory>target/dependencies/unix</outputDirectory>
@@ -249,13 +241,6 @@
                                     <version>${activemq-version}</version>
                                     <classifier>bin</classifier>
                                     <type>zip</type>
-                                    <outputDirectory>target/dependencies/unix</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.qpid</groupId>
-                                    <artifactId>qpid-amqp-1-0-client-jms</artifactId>
-                                    <version>${qpid-jms-version}</version>
-                                    <type>jar</type>
                                     <outputDirectory>target/dependencies/unix</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
@@ -290,7 +275,6 @@
                <plugin>
                    <groupId>org.apache.maven.plugins</groupId>
                    <artifactId>maven-assembly-plugin</artifactId>
-                   <version>${maven-assembly-plugin-version}</version>
                    <executions>
                        <execution>
                            <id>unix-bin</id>

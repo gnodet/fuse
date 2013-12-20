@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>gateway-project</artifactId>
-        <groupId>org.fusesource.fabric</groupId>
+        <groupId>io.fabric8</groupId>
         <version>7.3.0.redhat-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -35,16 +35,8 @@
           *
         </fuse.osgi.import>
         <fuse.osgi.private.pkg>
-          META-INF.services.*,
+          META-INF.services.*;-split-package:=first,
         </fuse.osgi.private.pkg>
-      <!-- not required in private.pkg
-          com.sun.nio.sctp*,
-          gnu.io*,
-          javassist*,
-          org.jboss.marshalling*
-          com.google.protobuf*,
-          com.jcraft.jzlib*,
-      -->
     </properties>
 
     <dependencies>
@@ -58,7 +50,7 @@
           <version>${vertx-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.fusesource.fabric</groupId>
+            <groupId>io.fabric8</groupId>
             <artifactId>common-util</artifactId>
             <version>${project.version}</version>
         </dependency>

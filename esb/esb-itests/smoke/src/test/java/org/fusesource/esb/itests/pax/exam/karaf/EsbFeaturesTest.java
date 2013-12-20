@@ -17,197 +17,151 @@
 
 package org.fusesource.esb.itests.pax.exam.karaf;
 
-import org.apache.karaf.features.FeaturesService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
-import org.ops4j.pax.exam.MavenUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-
-
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.logLevel;
 
 @RunWith(JUnit4TestRunner.class)
 @ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
-@Ignore("[FABRIC-662] Fix esb smoke EsbFeaturesTest")
 public class EsbFeaturesTest extends EsbTestSupport {
 
     @Test
     public void testConnector() throws Exception {
-        installAndCheckFeature("connector");
-        unInstallAndCheckFeature("connector");
+        installUninstallCommand("connector", false);
     }
 
     @Test
     public void testSaaj() throws Exception {
-        installAndCheckFeature("saaj");
-        unInstallAndCheckFeature("saaj");
-    }
-
-    @Test
-    public void testCxfOsgi() throws Exception {
-        installAndCheckFeature("cxf-osgi");
-        unInstallAndCheckFeature("cxf-osgi");
-    }
-
-    @Test
-    public void testCxfJaxrs() throws Exception {
-        FeaturesService s;
-        installAndCheckFeature("cxf-jaxrs");
-        unInstallAndCheckFeature("cxf-jaxrs");
+        installUninstallCommand("saaj");
     }
 
     @Test
     public void testCxfNmr() throws Exception {
-        installAndCheckFeature("cxf-nmr");
-        unInstallAndCheckFeature("cxf-nmr");
+        installUninstallCommand("cxf-nmr");
     }
 
     @Test
     public void testCamelNmr() throws Exception {
-        installAndCheckFeature("camel-nmr");
-        unInstallAndCheckFeature("camel-nmr");
+        installUninstallCommand("camel-nmr");
     }
 
     @Test
-    public void testCamelActivemq() throws Exception {
-        installAndCheckFeature("activmq-camel");
-        unInstallAndCheckFeature("activemq-camel");
-    }
-
-    @Test
+    @Ignore("[ENTESB-1035] connector feature does not install")
     public void testJpaHibernate() throws Exception {
-        installAndCheckFeature("jpa-hibernate");
-        unInstallAndCheckFeature("jpa-hibernate");
+        installUninstallCommand("jpa-hibernate");
     }
 
     @Test
     public void testServicemixShared() throws Exception {
-        installAndCheckFeature("servicemix-shared");
-        unInstallAndCheckFeature("servicemix-shared");
+        installUninstallCommand("servicemix-shared", false);
     }
 
     @Test
     public void testServicemixCxfBc() throws Exception {
-        installAndCheckFeature("servicemix-cxf-bc");
-        unInstallAndCheckFeature("servicemix-cxf-bc");
+        installUninstallCommand("servicemix-cxf-bc", false);
     }
 
     @Test
     public void testServicemixFile() throws Exception {
-        installAndCheckFeature("servicemix-file");
-        unInstallAndCheckFeature("servicemix-file");
+        installUninstallCommand("servicemix-file", false);        
     }
 
     @Test
     public void testServicemixFtp() throws Exception {
-        installAndCheckFeature("servicemix-ftp");
-        unInstallAndCheckFeature("servicemix-ftp");
+        installUninstallCommand("servicemix-ftp", false);
     }
 
     @Test
     public void testServicemixHttp() throws Exception {
-        installAndCheckFeature("servicemix-http");
-        unInstallAndCheckFeature("servicemix-http");
+        installUninstallCommand("servicemix-http", false);
     }
 
     @Test
     public void testServicemixJms() throws Exception {
-        installAndCheckFeature("servicemix-jms");
-        unInstallAndCheckFeature("servicemix-jms");
+        installUninstallCommand("servicemix-jms", false);
     }
 
     @Test
     public void testServicemixMail() throws Exception {
-        installAndCheckFeature("servicemix-mail");
-        unInstallAndCheckFeature("servicemix-mail");
+        installUninstallCommand("servicemix-mail", false);
     }
 
     @Test
     public void testServicemixDrools() throws Exception {
-        installAndCheckFeature("servicemix-drools");
-        unInstallAndCheckFeature("servicemix-drools");
+        installUninstallCommand("servicemix-drools", false);
     }
 
     @Test
     public void testServicemixCxfSe() throws Exception {
-        installAndCheckFeature("servicemix-cxf-se");
-        unInstallAndCheckFeature("servicemix-cxf-se");
+        installUninstallCommand("servicemix-cxf-se", false);
     }
 
     @Test
     public void testServicemixEip() throws Exception {
-        installAndCheckFeature("servicemix-eip");
-        unInstallAndCheckFeature("servicemix-eip");
+        installUninstallCommand("servicemix-eip", false);
     }
 
     @Test
+    public void testServicemixCamel() throws Exception {
+        installUninstallCommand("servicemix-camel", false);
+    }
+    
+    @Test
     public void testServicemixOsWorkflow() throws Exception {
-        installAndCheckFeature("servicemix-osworkflow");
-        unInstallAndCheckFeature("servicemix-osworkflow");
+        installUninstallCommand("servicemix-osworkflow", false);
     }
 
     @Test
     public void testServicemixQuartz() throws Exception {
-        installAndCheckFeature("servicemix-quartz");
-        unInstallAndCheckFeature("servicemix-quartz");
+        installUninstallCommand("servicemix-quartz", false);
     }
 
     @Test
     public void testServicemixScripting() throws Exception {
-        installAndCheckFeature("servicemix-scripting");
-        unInstallAndCheckFeature("servicemix-scripting");
+        installUninstallCommand("servicemix-scripting", false);
     }
 
     @Test
     public void testServicemixValidation() throws Exception {
-        installAndCheckFeature("servicemix-validation");
-        unInstallAndCheckFeature("servicemix-validation");
+        installUninstallCommand("servicemix-validation", false);
     }
 
     @Test
+    @Ignore("[ENTESB-1050] JBI features not installing within pax-exam")
     public void testServicemixSaxon() throws Exception {
-        installAndCheckFeature("servicemix-saxon");
-        unInstallAndCheckFeature("servicemix-saxon");
+        installUninstallCommand("servicemix-saxon");
     }
 
     @Test
-    public void testServicemixWsn2005() throws Exception {
-        installAndCheckFeature("mq-fabric");
-        installAndCheckFeature("servicemix-wsn2005");
-        unInstallAndCheckFeature("servicemix-wsn2005");
+    public void testServicemixWsn2005() throws Exception {        
+        installUninstallCommand("servicemix-wsn2005", false);
     }
 
     @Test
     public void testServicemixSnmp() throws Exception {
-        installAndCheckFeature("servicemix-snmp");
-        unInstallAndCheckFeature("servicemix-snmp");
+        installUninstallCommand("servicemix-snmp", false);
     }
 
     @Test
     public void testServicemixVfs() throws Exception {
-        installAndCheckFeature("servicemix-vfs");
-        unInstallAndCheckFeature("servicemix-vfs");
+        installUninstallCommand("servicemix-vfs", false);
     }
 
     @Test
     public void testServicemixSmpp() throws Exception {
-        installAndCheckFeature("servicemix-smpp");
-        unInstallAndCheckFeature("servicemix-smpp");
+        installUninstallCommand("servicemix-smpp", false);
     }
 
     @Configuration
     public Option[] config() {
         return new Option[]{
-                esbDistributionConfiguration(), keepRuntimeFolder(),
-                editConfigurationFilePut("system.properties", "esb.version", MavenUtils.asInProject().getVersion(GROUP_ID, ARTIFACT_ID)),
-                logLevel(LogLevelOption.LogLevel.INFO)};
+                new DefaultCompositeOption(esbDistributionConfiguration("jboss-fuse-full")),
+        };
     }
 }
