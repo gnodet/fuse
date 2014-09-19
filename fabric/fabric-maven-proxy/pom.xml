@@ -49,10 +49,6 @@
 
 		<dependency>
 			<groupId>io.fabric8</groupId>
-			<artifactId>maven-util</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.fabric8</groupId>
 			<artifactId>fabric-zookeeper</artifactId>
 		</dependency>
 		<dependency>

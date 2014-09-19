@@ -1055,13 +1055,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Utils -->
-            <dependency>
-                <groupId>io.fabric8</groupId>
-                <artifactId>maven-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- OSGi -->
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -3676,7 +3669,6 @@
         <module>fabric8-maven-plugin</module>
         <module>gateway</module>
         <module>insight</module>
-        <module>maven-util</module>
         <module>mq</module>
         <module>patch</module>
         <module>process</module>

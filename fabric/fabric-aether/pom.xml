@@ -139,6 +139,10 @@
             <artifactId>maven-aether-provider</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-connector-wagon</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.sonatype.plexus</groupId>
             <artifactId>plexus-cipher</artifactId>
         </dependency>
@@ -154,15 +158,18 @@
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-http-lightweight</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>io.fabric8</groupId>
-            <artifactId>common-util</artifactId>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings-builder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-container-default</artifactId>
         </dependency>
 
         <dependency>
             <groupId>io.fabric8</groupId>
-            <artifactId>maven-util</artifactId>
+            <artifactId>common-util</artifactId>
         </dependency>
 
     </dependencies>
@@ -197,6 +204,7 @@
                         </Import-Package>
                         <Export-Package>
                             io.fabric8.aether.*;version${project.version},
+                            io.fabric8.maven.util.*;version${project.version},
                             org.eclipse.*,
                             org.apache.*,
                             org.codehaus.*,
