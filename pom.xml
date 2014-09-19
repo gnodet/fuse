@@ -3672,7 +3672,6 @@
 
         <module>apm</module>
         <module>common-util</module>
-        <module>fab</module>
         <module>fabric</module>
         <module>fabric8-maven-plugin</module>
         <module>gateway</module>
