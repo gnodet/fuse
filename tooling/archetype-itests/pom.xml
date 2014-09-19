@@ -157,19 +157,6 @@
         </dependency -->
 
         <dependency>
-            <groupId>io.fabric8.insight</groupId>
-            <artifactId>insight-maven</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-embedder</artifactId>
             <version>3.0.5</version>
@@ -188,6 +175,10 @@
                     <artifactId>plexus-cipher</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric-aether</artifactId>
         </dependency>
         <dependency>
             <groupId>org.sonatype.plexus</groupId>

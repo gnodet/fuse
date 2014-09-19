@@ -23,16 +23,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.fabric8.insight.maven.aether.Aether;
-import io.fabric8.insight.maven.aether.AetherResult;
+import io.fabric8.aether.MavenResolver;
+import io.fabric8.aether.MavenResolverImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.eclipse.aether.artifact.Artifact;
 import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -40,8 +42,6 @@ import static org.junit.Assert.fail;
 public class ArchetypeTest {
 
     private boolean verbose = true;
-
-    private Aether aether = new Aether();
 
     //    private String groupId = "myGroup";
 //    private String artifactId = "myArtifact";
@@ -108,11 +108,10 @@ public class ArchetypeTest {
     }
 
     private void assertArchetypeCreated(String artifactId, String groupId, String version) throws Exception {
-        AetherResult result = aether.resolve(groupId, artifactId, version);
-
-        List<File> files = result.getResolvedFiles();
-        assertTrue("No files resolved for " + artifactId + " version: " + version, files.size() > 0);
-        File archetypejar = files.get(0);
+        MavenResolver resolver = new MavenResolverImpl();
+        Artifact artifact = resolver.resolveArtifact(true, groupId, artifactId, version, null, null);
+        assertNotNull("No files resolved for " + artifactId + " version: " + version, artifact);
+        File archetypejar = artifact.getFile();
         assertTrue("archetype jar does not exist", archetypejar.exists());
 
         assertArchetypeCreated(artifactId, groupId, version, archetypejar);

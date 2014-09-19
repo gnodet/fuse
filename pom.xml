@@ -128,7 +128,7 @@
         <servicemix.legal.version>1.0</servicemix.legal.version>
 
         <activemq-version>5.10.0</activemq-version>
-        <aether-version>1.11</aether-version>
+        <aether-version>0.9.0.M2</aether-version>
         <ant.bundle.version>1.8.2_2</ant.bundle.version>
         <antlr-version>3.3</antlr-version>
         <archetype-packaging.version>2.2</archetype-packaging.version>
@@ -157,6 +157,7 @@
         <camel-version-range>[2.13,3)</camel-version-range>
         <camel-version>2.13.2</camel-version>
         <cassandra-version>2.0.7</cassandra-version>
+        <codehaus-plexus-version>1.5.5</codehaus-plexus-version>
         <codahale-metrics-version>3.0.1</codahale-metrics-version>
         <commons-beanutils-version>1.8.3</commons-beanutils-version>
         <commons-codec-version>1.6</commons-codec-version>
@@ -3478,10 +3479,20 @@
                 <artifactId>jolokia-core</artifactId>
                 <version>${jolokia-version}</version>
             </dependency>
+                <groupId>org.eclipse.aether</groupId>
+                <artifactId>aether-connector-wagon</artifactId>
+                <version>${aether-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-settings-builder</artifactId>
+                <version>${maven-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-file</artifactId>
                 <version>${wagon-version}</version>
-                </dependency>
+            </dependency>
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-http-lightweight</artifactId>
