@@ -316,6 +316,8 @@
         <shrinkwrap-version>1.1.2</shrinkwrap-version>
         <slf4j-api-version>1.7.5</slf4j-api-version>
         <slf4j-version>1.7.5</slf4j-version>
+        <sonatype-plexus-sec-version>1.3</sonatype-plexus-sec-version>
+        <sonatype-plexus-cipher-version>1.7</sonatype-plexus-cipher-version>
         <spring-bundle-version>3.2.9.RELEASE_1</spring-bundle-version>
         <spring-data-rest-version>2.0.2.RELEASE</spring-data-rest-version>
         <spring-osgi-version>1.2.1</spring-osgi-version>
@@ -603,6 +605,11 @@
             <!-- Fabric -->
             <dependency>
                 <groupId>io.fabric8</groupId>
+                <artifactId>fabric-aether</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.fabric8</groupId>
                 <artifactId>fabric-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -869,11 +876,6 @@
             <dependency>
                 <groupId>io.fabric8</groupId>
                 <artifactId>fabric-kubernetes-provider</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.fabric8.fab</groupId>
-                <artifactId>fab-osgi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -3483,6 +3485,182 @@
                 <artifactId>jolokia-core</artifactId>
                 <version>${jolokia-version}</version>
             </dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-file</artifactId>
+                <version>${wagon-version}</version>
+                </dependency>
+            <dependency>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-http-lightweight</artifactId>
+                <version>${wagon-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>nekohtml</groupId>
+                        <artifactId>nekohtml</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>nekohtml</groupId>
+                        <artifactId>xercesMinimal</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-aether-provider</artifactId>
+                <version>${maven-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-embedder</artifactId>
+                <version>${maven-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.sisu</groupId>
+                        <artifactId>org.eclipse.sisu.plexus</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-utils</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.sonatype.plexus</groupId>
+                        <artifactId>plexus-cipher</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-invoker</artifactId>
+                <version>${maven-shared-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-utils</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-classworlds</artifactId>
+                <version>${plexus-classworlds-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bndlib</artifactId>
+                <version>${bndlib-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-sec-dispatcher</artifactId>
+                <version>${sonatype-plexus-sec-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-cipher</artifactId>
+                <version>${sonatype-plexus-cipher-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-container-default</artifactId>
+                <version>${codehaus-plexus-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-annotations</artifactId>
+                <version>${codehaus-plexus-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-interpolation</artifactId>
+                <version>${codehaus-plexus-interpolation-version}</version>
+            </dependency>
+
+            <!-- OPS4J -->
+
+            <dependency>
+                <groupId>org.ops4j.base</groupId>
+                <artifactId>ops4j-base-net</artifactId>
+                <version>${ops4j-base.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ops4j.pax.tinybundles</groupId>
+                <artifactId>tinybundles</artifactId>
+                <version>${tinybundles-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ops4j.pax.swissbox</groupId>
+                <artifactId>pax-swissbox-optional-jcl</artifactId>
+                <version>${ops4j-pax-swissbox-optional-jcl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ops4j.pax.swissbox</groupId>
+                <artifactId>pax-swissbox-property</artifactId>
+                <version>${ops4j-pax-swissbox-property.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sonatype.sisu</groupId>
+                <artifactId>sisu-inject-plexus</artifactId>
+                <version>${sisu-inject-plexus-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>plexus-utils</artifactId>
+                        <groupId>org.codehaus.plexus</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Quickstarts -->
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-ejb_3.1_spec</artifactId>
+                <version>${geronimo-ejb-3-1-spec-version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.weld.se</groupId>
+                <artifactId>weld-se</artifactId>
+                <version>${weld2-version}</version>
+            </dependency>
+
+            <!-- CDI -->
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+                <version>${geronimo-interceptor-api-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+                <version>${geronimo-cdi-api-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-el_2.2_spec</artifactId>
+                <version>${geronimo-el-api-version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

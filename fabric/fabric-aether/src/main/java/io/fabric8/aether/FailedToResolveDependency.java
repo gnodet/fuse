@@ -13,29 +13,23 @@
  *  implied.  See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-package io.fabric8.agent;
+package io.fabric8.aether;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import org.eclipse.aether.RepositoryException;
+import org.eclipse.aether.graph.Dependency;
 
 /**
+ * An exception thrown if a dependency cannot resolve its dependents
  */
-public interface StreamProvider {
+public class FailedToResolveDependency extends RepositoryException {
+    private final Dependency dependency;
 
-    InputStream open() throws IOException;
-
-    public static class File implements StreamProvider {
-        private final java.io.File file;
-
-        public File(java.io.File file) {
-            this.file = file;
-        }
-
-        @Override
-        public InputStream open() throws IOException {
-            return new FileInputStream(file);
-        }
+    public FailedToResolveDependency(Dependency dependency, Exception cause) {
+        super("Failed to resolve dependency of " + dependency.getArtifact() + ". " + cause.getMessage(), cause);
+        this.dependency = dependency;
     }
 
+    public Dependency getDependency() {
+        return dependency;
+    }
 }

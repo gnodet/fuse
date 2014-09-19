@@ -33,7 +33,6 @@
     <repository>mvn:org.apache.karaf.assemblies.features/enterprise/${karaf-version}/xml/features</repository>
 
     <feature name="karaf" version="${karaf-version}" resolver="(obr)">
-        <!-- we need 1.2.9-SNAPSHOT as 1.2.8 does not advertise the ConfigurationAdmin service -->
         <bundle>mvn:io.fabric8/fabric-ssl/${project.version}</bundle>
         <bundle>mvn:org.apache.felix/org.apache.felix.configadmin/${felix-configadmin-version}</bundle>
 
@@ -101,23 +100,12 @@
         </conditional>
     </feature>
 
-    <feature name="fabric-bundle" version="${project.version}" resolver="(obr)">
-        <feature>features</feature>
-        <feature version="${project.version}">fabric-core</feature>
-        <bundle>mvn:io.fabric8/common-util/${project.version}</bundle>
-        <bundle>mvn:io.fabric8.fab/fab-osgi/${project.version}</bundle>
-        <bundle>mvn:org.ops4j.base/ops4j-base-net/${ops4j-base.version}</bundle>
-        <bundle>mvn:org.ops4j.base/ops4j-base-lang/${ops4j-base.version}</bundle>
-        <bundle>mvn:org.ops4j.base/ops4j-base-monitors/${ops4j-base.version}</bundle>
-        <bundle>mvn:org.ops4j.base/ops4j-base-util-property/${ops4j-base.version}</bundle>
-    </feature>
-
     <feature name="process-manager" version="${project.version}" resolver="(obr)">
-        <feature>fabric-bundle</feature>
         <feature>fabric-commands</feature>
         <feature>camel-mvel</feature>
         <bundle>mvn:biz.aQute.bnd/bndlib/${bndlib-version}</bundle>
         <bundle>mvn:io.fabric8/common-util/${project.version}</bundle>
+        <bundle>mvn:io.fabric8/fabric-aether/${project.version}</bundle>
         <bundle>mvn:io.fabric8/process-manager/${project.version}</bundle>
         <bundle>mvn:org.ops4j.base/ops4j-base-net/${ops4j-base.version}</bundle>
         <bundle>mvn:org.ops4j.base/ops4j-base-lang/${ops4j-base.version}</bundle>
@@ -164,7 +152,6 @@
 
     <feature name="fabric-project-deployer" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">fabric-agent</feature>
-        <feature version="${project.version}">fabric-bundle</feature>
         <bundle dependency="true">mvn:org.ops4j.pax.url/pax-url-aether/${pax.url.version}</bundle>
         <bundle dependency="true">mvn:org.ops4j.pax.url/pax-url-wrap/${pax.url.version}/jar/uber</bundle>
         <bundle>mvn:io.fabric8/fabric-project-deployer/${project.version}</bundle>
@@ -180,6 +167,7 @@
         <feature version="${karaf-version}">http</feature>
         <feature version="${project.version}">fabric-core</feature>
         <feature version="${project.version}">fabric-project-deployer</feature>
+        <bundle>mvn:io.fabric8/fabric-aether/${project.version}</bundle>
         <bundle>mvn:io.fabric8/fabric-maven-proxy/${project.version}</bundle>
     </feature>
 
@@ -702,7 +690,6 @@
         <feature version="${project.version}">fabric-core</feature>
         <feature version="${project.version}">fabric-project-deployer</feature>
         <feature version="${project.version}">process-manager</feature>
-        <feature version="${project.version}">fabric-bundle</feature>
         <feature version="${project.version}">fabric-groovy</feature>
         <feature version="${project.version}">fabric-commands</feature>
         <bundle>mvn:io.fabric8/fabric-process-container/${project.version}</bundle>

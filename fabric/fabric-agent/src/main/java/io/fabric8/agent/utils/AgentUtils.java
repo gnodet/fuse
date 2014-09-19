@@ -59,7 +59,6 @@ public class AgentUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AgentUtils.class);
 
-    public static final String FAB_PROTOCOL = "fab:";
     public static final String REQ_PROTOCOL = "req:";
 
 

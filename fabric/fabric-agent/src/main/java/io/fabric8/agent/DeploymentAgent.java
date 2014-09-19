@@ -66,11 +66,6 @@ import io.fabric8.common.util.ChecksumUtils;
 import io.fabric8.common.util.Files;
 import io.fabric8.common.util.MultiException;
 import io.fabric8.common.util.Strings;
-import io.fabric8.fab.MavenResolver;
-import io.fabric8.fab.MavenResolverImpl;
-import io.fabric8.fab.osgi.ServiceConstants;
-import io.fabric8.fab.osgi.internal.Configuration;
-import io.fabric8.fab.osgi.internal.FabResolverFactoryImpl;
 
 import org.apache.felix.utils.properties.Properties;
 import org.apache.felix.utils.version.VersionRange;
@@ -574,28 +569,18 @@ public class DeploymentAgent implements ManagedService {
         // Compute deployment
         final Map<String, Repository> repositories = loadRepositories(manager, getPrefixedProperties(properties, "repository."));
 
-        // Update bundles
-        FabResolverFactoryImpl fabResolverFactory = new FabResolverFactoryImpl();
-        fabResolverFactory.setConfiguration(new FabricFabConfiguration(config, propertyResolver));
-        fabResolverFactory.setBundleContext(bundleContext);
-        fabResolverFactory.setFeaturesService(new FeaturesServiceImpl() {
-            @Override
-            public Repository[] listRepositories() {
-                return repositories.values().toArray(new Repository[repositories.size()]);
-            }
-        });
-
         DeploymentBuilder builder = new DeploymentBuilder(
                 manager,
-                fabResolverFactory,
                 repositories.values(),
                 urlHandlersTimeout
         );
         updateStatus("downloading", null);
+        if (!getPrefixedProperties(properties, "fab.").isEmpty()) {
+            LOGGER.warn("Fabric bundles are not supported anymore, those requirements will be ignored.");
+        }
         Map<String, Resource> downloadedResources = builder.download(
                 getPrefixedProperties(properties, "feature."),
                 getPrefixedProperties(properties, "bundle."),
-                getPrefixedProperties(properties, "fab."),
                 getPrefixedProperties(properties, "req."),
                 getPrefixedProperties(properties, "override."),
                 getPrefixedProperties(properties, "optional."),
@@ -1349,65 +1334,4 @@ public class DeploymentAgent implements ManagedService {
 
     }
 
-    public static class FabricFabConfiguration extends PropertyStore implements Configuration {
-
-        final DictionaryPropertyResolver propertyResolver;
-        final MavenConfigurationImpl config;
-
-        public FabricFabConfiguration(MavenConfigurationImpl config, DictionaryPropertyResolver propertyResolver) {
-            this.propertyResolver = propertyResolver;
-            this.config = config;
-        }
-
-        @Override
-        public String[] getSharedResourcePaths() {
-            if (!contains(ServiceConstants.PROPERTY_SHARED_RESOURCE_PATHS)) {
-                String text = propertyResolver.get(ServiceConstants.PROPERTY_SHARED_RESOURCE_PATHS);
-                String[] repositories;
-                if (text == null || text.length() == 0) {
-                    repositories = ServiceConstants.DEFAULT_PROPERTY_SHARED_RESOURCE_PATHS;
-                } else {
-                    repositories = toArray(text);
-                }
-                return set(ServiceConstants.PROPERTY_SHARED_RESOURCE_PATHS, repositories);
-            }
-            return get(ServiceConstants.PROPERTY_SHARED_RESOURCE_PATHS);
-        }
-
-        @Override
-        public boolean getCertificateCheck() {
-            return config.getCertificateCheck();
-        }
-
-        @Override
-        public boolean isInstallMissingDependencies() {
-            return false;
-        }
-
-        @Override
-        public MavenResolver getResolver() {
-            try {
-                MavenResolverImpl resolver = new MavenResolverImpl();
-                List<String> repos = new ArrayList<String>();
-                for (MavenRepositoryURL url : config.getRepositories()) {
-                    repos.add(url.getURL().toURI().toString());
-                }
-                resolver.setRepositories(repos.toArray(new String[repos.size()]));
-                //The aether local repository is expecting a directory as a String and not a URI/URL.
-                resolver.setLocalRepo(new File(config.getLocalRepository().getURL().toURI()).getAbsolutePath());
-                return resolver;
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
-        }
-
-        protected String[] toArray(String text) {
-            String[] answer = null;
-            if (text != null) {
-                answer = text.split(",");
-            }
-            return answer;
-        }
-
-    }
 }

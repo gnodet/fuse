@@ -13,29 +13,19 @@
  *  implied.  See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-package io.fabric8.agent;
+package io.fabric8.aether;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Comparator;
 
-/**
- */
-public interface StreamProvider {
+import org.eclipse.aether.graph.DependencyNode;
 
-    InputStream open() throws IOException;
+public class DependencyNodeComparator implements Comparator<DependencyNode> {
+    public static Comparator<DependencyNode> INSTANCE = new DependencyNodeComparator();
 
-    public static class File implements StreamProvider {
-        private final java.io.File file;
-
-        public File(java.io.File file) {
-            this.file = file;
-        }
-
-        @Override
-        public InputStream open() throws IOException {
-            return new FileInputStream(file);
-        }
+    @Override
+    public int compare(DependencyNode o1, DependencyNode o2) {
+        DependencyId id1 = DependencyId.newInstance(o1);
+        DependencyId id2 = DependencyId.newInstance(o2);
+        return id1.compareTo(id2);
     }
-
 }

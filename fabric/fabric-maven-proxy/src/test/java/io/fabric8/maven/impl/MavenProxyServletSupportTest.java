@@ -40,6 +40,10 @@ import io.fabric8.api.RuntimeProperties;
 import io.fabric8.api.scr.AbstractRuntimeProperties;
 
 import io.fabric8.deployer.ProjectDeployer;
+import io.fabric8.maven.impl.InvalidMavenArtifactRequest;
+import io.fabric8.maven.impl.MavenDownloadProxyServlet;
+import io.fabric8.maven.impl.MavenProxyServletSupport;
+import io.fabric8.maven.impl.MavenUploadProxyServlet;
 import org.apache.commons.io.FileUtils;
 import org.easymock.EasyMock;
 import org.eclipse.jetty.server.Handler;

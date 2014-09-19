@@ -13,29 +13,16 @@
  *  implied.  See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-package io.fabric8.agent;
+package io.fabric8.aether;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.logging.Logger;
 
-/**
- */
-public interface StreamProvider {
+public class PathHelper {
+    private static final transient Logger LOG = Logger.getLogger(PathHelper.class.getName());
 
-    InputStream open() throws IOException;
-
-    public static class File implements StreamProvider {
-        private final java.io.File file;
-
-        public File(java.io.File file) {
-            this.file = file;
-        }
-
-        @Override
-        public InputStream open() throws IOException {
-            return new FileInputStream(file);
-        }
+    public static String getUserMavenRepository() {
+        String dir = System.getProperty("user.home", "~") + "/.m2/repository";
+        LOG.fine("Using user repository: " + dir);
+        return dir;
     }
-
 }

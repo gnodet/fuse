@@ -52,11 +52,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.fabric8.fab</groupId>
-      <artifactId>fab-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <scope>provided</scope>
@@ -98,6 +93,16 @@
     <dependency>
       <groupId>org.mvel</groupId>
       <artifactId>mvel2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>fabric-aether</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>biz.aQute.bnd</groupId>
+      <artifactId>bndlib</artifactId>
     </dependency>
 
     <!-- Provided Dependencies -->

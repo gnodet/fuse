@@ -17,7 +17,6 @@ package io.fabric8.agent.resolver;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,10 +66,9 @@ public class ResolverTest {
         Map<URI, Repository> repositories = new HashMap<URI, Repository>();
         AgentUtils.addRepository(manager, repositories, URI.create("mvn:org.apache.karaf.assemblies.features/standard/" + System.getProperty("karaf-version") + "/xml/features"));
 
-        DeploymentBuilder builder = new DeploymentBuilder(manager, null, repositories.values(), 0);
+        DeploymentBuilder builder = new DeploymentBuilder(manager, repositories.values(), 0);
 
         builder.download(new HashSet<String>(Arrays.asList("karaf-framework", "ssh")),
-                         Collections.<String>emptySet(),
                          Collections.<String>emptySet(),
                          Collections.<String>emptySet(),
                          Collections.<String>emptySet(),

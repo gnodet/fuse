@@ -60,7 +60,6 @@ import io.fabric8.agent.repository.MetadataRepository;
 import io.fabric8.agent.resolver.ResourceBuilder;
 import io.fabric8.api.data.BundleInfo;
 import io.fabric8.common.util.MultiException;
-import io.fabric8.fab.osgi.internal.FabResolverFactoryImpl;
 import org.apache.felix.utils.version.VersionRange;
 import org.apache.karaf.deployer.blueprint.BlueprintTransformer;
 import org.apache.karaf.deployer.blueprint.BlueprintURLHandler;
@@ -251,14 +250,12 @@ public class VerifyFeatureResolutionMojo extends AbstractMojo {
 
             DeploymentBuilder builder = new DeploymentBuilder(
                     manager,
-                    null,
                     repositories.values(),
                     -1 // Disable url handlers
             );
             Map<String, Resource> downloadedResources = builder.download(
                     getPrefixedProperties(properties, "feature."),
                     getPrefixedProperties(properties, "bundle."),
-                    getPrefixedProperties(properties, "fab."),
                     getPrefixedProperties(properties, "req."),
                     getPrefixedProperties(properties, "override."),
                     getPrefixedProperties(properties, "optional."),

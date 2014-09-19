@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServlet;
 
 import com.google.common.base.Strings;
+import io.fabric8.aether.MavenRepositorySystemSession;
 import io.fabric8.common.util.Files;
 import io.fabric8.deployer.ProjectDeployer;
 import io.fabric8.deployer.dto.DependencyDTO;

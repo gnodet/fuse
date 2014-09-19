@@ -13,29 +13,10 @@
  *  implied.  See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-package io.fabric8.agent;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+package io.fabric8.aether;
 
 /**
  */
-public interface StreamProvider {
-
-    InputStream open() throws IOException;
-
-    public static class File implements StreamProvider {
-        private final java.io.File file;
-
-        public File(java.io.File file) {
-            this.file = file;
-        }
-
-        @Override
-        public InputStream open() throws IOException {
-            return new FileInputStream(file);
-        }
-    }
-
+public interface Constants {
+    static final String INSTR_BUNDLE_SYMBOLIC_NAME = "Bundle-SymbolicName";
 }

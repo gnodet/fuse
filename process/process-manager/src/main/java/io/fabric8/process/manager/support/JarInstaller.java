@@ -20,14 +20,15 @@ import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import io.fabric8.aether.DependencyFilters;
+import io.fabric8.aether.DependencyTreeResult;
+import io.fabric8.aether.MavenResolver;
+import io.fabric8.aether.MavenResolverImpl;
 import io.fabric8.common.util.ChecksumUtils;
 import io.fabric8.common.util.FileChangeInfo;
 import io.fabric8.common.util.Filter;
 import io.fabric8.common.util.Pair;
 import io.fabric8.common.util.Strings;
-import io.fabric8.fab.DependencyFilters;
-import io.fabric8.fab.DependencyTreeResult;
-import io.fabric8.fab.MavenResolverImpl;
 import io.fabric8.process.manager.InstallContext;
 import io.fabric8.process.manager.InstallOptions;
 import io.fabric8.process.manager.InstallTask;
@@ -60,7 +61,7 @@ public class JarInstaller implements InstallTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(JarInstaller.class);
 
-    MavenResolverImpl mavenResolver = new MavenResolverImpl();
+    MavenResolver mavenResolver = new MavenResolverImpl();
     private final InstallOptions parameters;
     private final Executor executor;
 
