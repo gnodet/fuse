@@ -29,11 +29,6 @@ import org.apache.maven.settings.crypto.SettingsDecrypter;
 import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.aether.repository.*;
-import org.sonatype.aether.util.repository.ConservativeAuthenticationSelector;
-import org.sonatype.aether.util.repository.DefaultAuthenticationSelector;
-import org.sonatype.aether.util.repository.DefaultMirrorSelector;
-import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -41,6 +36,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 
 public class MavenUtils {
 
@@ -124,14 +121,10 @@ public class MavenUtils {
     public static List<RemoteRepository> getRemoteRepositories() {
         List<RemoteRepository> repositories = new LinkedList<RemoteRepository>();
         for (Repository repository : getRepositories()) {
-            RemoteRepository remote = new RemoteRepository();
-            remote.setId(repository.getId());
-            remote.setUrl(repository.getUrl());
-            remote.setContentType("default");
-            if (repository.getSnapshots().isEnabled()) {
-                RepositoryPolicy repositoryPolicy = new RepositoryPolicy();
-                if (repository.getSnapshots() != null) {
-                    remote.setPolicy(true, convertMavenRepositoryPolicy(repository.getSnapshots()));
+            RemoteRepository.Builder builder = new RemoteRepository.Builder(repository.getId(), "default", repository.getUrl());
+            if (repository.getSnapshots() != null) {
+                if (repository.getSnapshots().isEnabled()) {
+                    builder.setPolicy(convertMavenRepositoryPolicy(repository.getSnapshots()));
                 }
             }
             if (repository.getReleases() != null) {
@@ -256,19 +249,34 @@ public class MavenUtils {
             }
         }
         return decoded.toString();
-    }   
+    }
 
-    private static SettingsDecrypter createSettingsDecrypter() {
-        MavenSecDispatcher secDispatcher = new MavenSecDispatcher();
-        DefaultSettingsDecrypter decrypter = new DefaultSettingsDecrypter();
+    public static SettingsDecrypter createSettingsDecrypter() {
+        return createSettingsDecrypter("~/.m2/settings-security.xml");
+    }
+
+    public static SettingsDecrypter createSettingsDecrypter(String configurationFile) {
         try {
-            Field field = decrypter.getClass().getDeclaredField("securityDispatcher");
+            DefaultSecDispatcher secDispatcher = new DefaultSecDispatcher();
+
+            Field field = secDispatcher.getClass().getDeclaredField("_configurationFile");
+            field.setAccessible(true);
+            field.set(secDispatcher, configurationFile);
+
+            field = secDispatcher.getClass().getDeclaredField("_cipher");
+            field.setAccessible(true);
+            field.set(secDispatcher, new DefaultPlexusCipher());
+
+            DefaultSettingsDecrypter decrypter = new DefaultSettingsDecrypter();
+
+            field = decrypter.getClass().getDeclaredField("securityDispatcher");
             field.setAccessible(true);
             field.set(decrypter, secDispatcher);
+
+            return decrypter;
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-        return decrypter;
     }
 
 

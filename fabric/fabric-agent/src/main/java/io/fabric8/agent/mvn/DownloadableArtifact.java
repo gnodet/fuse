@@ -21,6 +21,7 @@ import java.net.URL;
 
 import io.fabric8.common.util.NullArgumentException;
 import io.fabric8.common.util.URLUtils;
+import io.fabric8.maven.util.Parser;
 
 /**
  * An artifact that can be downloaded.

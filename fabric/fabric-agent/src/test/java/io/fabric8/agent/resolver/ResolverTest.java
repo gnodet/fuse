@@ -33,11 +33,10 @@ import org.apache.felix.utils.version.VersionRange;
 import org.apache.karaf.features.Repository;
 import io.fabric8.agent.DeploymentBuilder;
 import io.fabric8.agent.download.DownloadManager;
-import io.fabric8.agent.mvn.MavenConfigurationImpl;
-import io.fabric8.agent.mvn.MavenSettingsImpl;
-import io.fabric8.agent.mvn.PropertiesPropertyResolver;
+import io.fabric8.maven.util.MavenConfigurationImpl;
 import io.fabric8.agent.utils.AgentUtils;
 import org.junit.Test;
+import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.resource.Resource;
@@ -57,9 +56,9 @@ public class ResolverTest {
         Properties properties = new Properties();
         properties.setProperty("mvn.localRepository", home+"/.m2/repository/@snapshots");
         properties.setProperty("mvn.repositories", "http://repo1.maven.org/maven2/,http://repository.jboss.org/nexus/content/groups/fs-public/,https://repo.fusesource.com/nexus/content/repositories/ea");
+        properties.setProperty("mvn.settings", getClass().getResource("maven-default-settings.xml").toExternalForm());
         PropertiesPropertyResolver propertyResolver = new PropertiesPropertyResolver(properties);
         MavenConfigurationImpl mavenConfiguration = new MavenConfigurationImpl(propertyResolver, "mvn");
-        mavenConfiguration.setSettings(new MavenSettingsImpl(getClass().getResource("maven-default-settings.xml")));
 
         DownloadManager manager = new DownloadManager(mavenConfiguration, Executors.newFixedThreadPool(2));
 

@@ -118,7 +118,6 @@ public class MavenResolverImpl implements MavenResolver {
     public RepositorySystem getRepositorySystem() {
         if (repositorySystem == null) {
             try {
-                //repositorySystem = new DefaultPlexusContainer().lookup(RepositorySystem.class);
                 repositorySystem = RepositorySystemFactory.newRepositorySystem();
             } catch (Exception e) {
                 LOGGER.warn("Failed to lazily create RepositorySystem: " + e);
@@ -342,13 +341,13 @@ public class MavenResolverImpl implements MavenResolver {
         // work on the root dependency directly?
         if (true) {
             for (Dependency dependency : dependencies) {
-                DependencyNode node = resolveDepedencies(repositorySystem, session, repos, pomNode, dependency, shouldExclude);
+                DependencyNode node = resolveDependencies(repositorySystem, session, repos, pomNode, dependency, shouldExclude);
                 if (node != null) {
                     pomNode.getChildren().add(node);
                 }
             }
         } else {
-            DependencyNode node = resolveDepedencies(repositorySystem, session, repos, pomNode, rootDependency, shouldExclude);
+            DependencyNode node = resolveDependencies(repositorySystem, session, repos, pomNode, rootDependency, shouldExclude);
             if (node != null) {
                 pomNode = node;
             }
@@ -387,7 +386,7 @@ public class MavenResolverImpl implements MavenResolver {
         return result;
     }
 
-    protected DependencyNode resolveDepedencies(RepositorySystem repositorySystem, MavenRepositorySystemSession session, List<RemoteRepository> repos, DependencyNode pomNode, Dependency dependency, final Filter<Dependency> shouldExclude) throws FailedToResolveDependency {
+    protected DependencyNode resolveDependencies(RepositorySystem repositorySystem, MavenRepositorySystemSession session, List<RemoteRepository> repos, DependencyNode pomNode, Dependency dependency, final Filter<Dependency> shouldExclude) throws FailedToResolveDependency {
         if (!DependencyFilters.matches(dependency, shouldExclude)) {
             CollectRequest cr = new CollectRequest(dependency, repos);
             //request.setRequestContext("runtime");

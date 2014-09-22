@@ -32,13 +32,13 @@ import java.util.concurrent.ExecutorService;
 import javax.xml.parsers.ParserConfigurationException;
 
 import io.fabric8.agent.mvn.DownloadableArtifact;
-import io.fabric8.agent.mvn.MavenConfiguration;
-import io.fabric8.agent.mvn.MavenRepositoryURL;
-import io.fabric8.agent.mvn.Parser;
 import io.fabric8.agent.mvn.Version;
 import io.fabric8.agent.mvn.VersionRange;
 import io.fabric8.common.util.URLUtils;
 import io.fabric8.common.util.XmlUtils;
+import io.fabric8.maven.util.MavenConfiguration;
+import io.fabric8.maven.util.MavenRepositoryURL;
+import io.fabric8.maven.util.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

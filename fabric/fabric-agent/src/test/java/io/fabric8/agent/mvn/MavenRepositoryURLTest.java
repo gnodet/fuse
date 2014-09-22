@@ -16,6 +16,8 @@
 package io.fabric8.agent.mvn;
 
 import java.net.MalformedURLException;
+
+import io.fabric8.maven.util.MavenRepositoryURL;
 import org.junit.Assert;
 import org.junit.Test;
 

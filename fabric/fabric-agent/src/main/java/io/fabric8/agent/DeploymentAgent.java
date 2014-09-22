@@ -49,12 +49,6 @@ import java.util.regex.Pattern;
 import aQute.bnd.osgi.Macro;
 import aQute.bnd.osgi.Processor;
 import io.fabric8.agent.download.DownloadManager;
-import io.fabric8.agent.mvn.DictionaryPropertyResolver;
-import io.fabric8.agent.mvn.MavenConfigurationImpl;
-import io.fabric8.agent.mvn.MavenRepositoryURL;
-import io.fabric8.agent.mvn.MavenSettingsImpl;
-import io.fabric8.agent.mvn.PropertiesPropertyResolver;
-import io.fabric8.agent.mvn.PropertyStore;
 import io.fabric8.agent.repository.HttpMetadataProvider;
 import io.fabric8.agent.repository.MetadataRepository;
 import io.fabric8.agent.resolver.FeatureResource;
@@ -67,11 +61,14 @@ import io.fabric8.common.util.Files;
 import io.fabric8.common.util.MultiException;
 import io.fabric8.common.util.Strings;
 
+import io.fabric8.maven.util.MavenConfigurationImpl;
+import io.fabric8.maven.util.Parser;
 import org.apache.felix.utils.properties.Properties;
 import org.apache.felix.utils.version.VersionRange;
 import org.apache.felix.utils.version.VersionTable;
 import org.apache.karaf.features.Repository;
-import org.apache.karaf.features.internal.FeaturesServiceImpl;
+import org.ops4j.util.property.DictionaryPropertyResolver;
+import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -181,7 +178,6 @@ public class DeploymentAgent implements ManagedService {
         this.downloadExecutor = createDownloadExecutor();
 
         MavenConfigurationImpl config = new MavenConfigurationImpl(new PropertiesPropertyResolver(System.getProperties()), "org.ops4j.pax.url.mvn");
-        config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(), config.useFallbackRepositories()));
         manager = new DownloadManager(config, getDownloadExecutor());
         fabricService = new ServiceTracker<FabricService, FabricService>(systemBundleContext, FabricService.class, new ServiceTrackerCustomizer<FabricService, FabricService>() {
             @Override
@@ -260,7 +256,7 @@ public class DeploymentAgent implements ManagedService {
             try {
                 if (isUpdateable(bundle)) {
                     // TODO: what if the bundle location is not maven based ?
-                    io.fabric8.agent.mvn.Parser parser = new io.fabric8.agent.mvn.Parser(bundle.getLocation());
+                    Parser parser = new Parser(bundle.getLocation());
                     String systemPath = SYSTEM_PATH + File.separator + parser.getArtifactPath().substring(4);
                     String agentDownloadsPath = AGENT_DOWNLOAD_PATH + File.separator + parser.getArtifactPath().substring(4);
                     long systemChecksum = 0;
@@ -408,7 +404,6 @@ public class DeploymentAgent implements ManagedService {
         PropertiesPropertyResolver syspropsResolver = new PropertiesPropertyResolver(System.getProperties());
         DictionaryPropertyResolver propertyResolver = new DictionaryPropertyResolver(props, syspropsResolver);
         final MavenConfigurationImpl config = new MavenConfigurationImpl(propertyResolver, "org.ops4j.pax.url.mvn");
-        config.setSettings(new MavenSettingsImpl(config.getSettingsFileUrl(), config.useFallbackRepositories()));
         manager = new DownloadManager(config, getDownloadExecutor());
         Map<String, String> properties = new HashMap<String, String>();
         for (Enumeration e = props.keys(); e.hasMoreElements();) {

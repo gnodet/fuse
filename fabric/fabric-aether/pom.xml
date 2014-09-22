@@ -172,6 +172,23 @@
             <artifactId>common-util</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-util-property</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.base</groupId>
+            <artifactId>ops4j-base-lang</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ops4j.pax.url</groupId>
+            <artifactId>pax-url-commons</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -200,15 +217,20 @@
                                 resolution:=optional,
                             javax.*,
                             org.slf4j.*,
-                            biz.aQute.*
+                            biz.aQute.*,
+                            org.ops4j.*
                         </Import-Package>
                         <Export-Package>
-                            io.fabric8.aether.*;version${project.version},
-                            io.fabric8.maven.util.*;version${project.version},
+                            io.fabric8.aether.*;version=${project.version},
+                            io.fabric8.maven*;version=${project.version},
                             org.eclipse.*,
                             org.apache.*,
                             org.codehaus.*,
                             org.sonatype.*
+                            org.apache.maven*;version=${maven-version},
+                            org.codehaus.*;version=${codehaus-plexus-version},
+                            org.sonatype.plexus.components.cipher.*;version=${sonatype-plexus-cipher-version},
+                            org.sonatype.plexus.components.sec.*;version=${sonatype-plexus-sec-version},
                         </Export-Package>
                         <Conditional-Package>org.eclipse.aether</Conditional-Package>
                     </instructions>

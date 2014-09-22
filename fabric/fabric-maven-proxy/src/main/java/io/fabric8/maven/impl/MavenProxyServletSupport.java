@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServlet;
 
 import com.google.common.base.Strings;
 import io.fabric8.aether.MavenRepositorySystemSession;
+import io.fabric8.aether.RepositorySystemFactory;
 import io.fabric8.common.util.Files;
 import io.fabric8.deployer.ProjectDeployer;
 import io.fabric8.deployer.dto.DependencyDTO;
@@ -49,33 +50,25 @@ import io.fabric8.deployer.dto.DeployResults;
 import io.fabric8.deployer.dto.ProjectRequirements;
 import io.fabric8.maven.MavenProxy;
 import io.fabric8.maven.util.MavenUtils;
-import org.apache.maven.repository.internal.DefaultServiceLocator;
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
-import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.providers.file.FileWagon;
-import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
-import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
-import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
-import org.sonatype.aether.RepositorySystem;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.connector.wagon.WagonProvider;
-import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
-import org.sonatype.aether.installation.InstallRequest;
-import org.sonatype.aether.metadata.Metadata;
-import org.sonatype.aether.repository.Authentication;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.repository.RepositoryPolicy;
-import org.sonatype.aether.resolution.ArtifactRequest;
-import org.sonatype.aether.resolution.ArtifactResult;
-import org.sonatype.aether.resolution.MetadataRequest;
-import org.sonatype.aether.resolution.MetadataResult;
-import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
-import org.sonatype.aether.util.DefaultRepositoryCache;
-import org.sonatype.aether.util.DefaultRepositorySystemSession;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
-import org.sonatype.aether.util.metadata.DefaultMetadata;
+import org.eclipse.aether.DefaultRepositoryCache;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.installation.InstallRequest;
+import org.eclipse.aether.metadata.DefaultMetadata;
+import org.eclipse.aether.metadata.Metadata;
+import org.eclipse.aether.repository.Authentication;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.MetadataRequest;
+import org.eclipse.aether.resolution.MetadataResult;
+import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
+import org.eclipse.aether.util.repository.AuthenticationBuilder;
 
 public class MavenProxyServletSupport extends HttpServlet implements MavenProxy {
 
@@ -419,11 +412,7 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
     }
 
     protected RepositorySystem newRepositorySystem() {
-        DefaultServiceLocator locator = new DefaultServiceLocator();
-        locator.setServices(WagonProvider.class, new ManualWagonProvider());
-        locator.addService(RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class);
-        locator.setService(org.sonatype.aether.spi.log.Logger.class, LogAdapter.class);
-        return locator.getService(RepositorySystem.class);
+        return RepositorySystemFactory.newRepositorySystem();
     }
 
     /**
@@ -679,6 +668,7 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
         return projectDeployer;
     }
 
+<<<<<<< HEAD
     public static class LogAdapter implements org.sonatype.aether.spi.log.Logger {
 
         public boolean isDebugEnabled() {
@@ -729,4 +719,6 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
         }
     }
 
+=======
+>>>>>>> bd89b7e... Remove most of io.fabric8.agent.mvn package
 }

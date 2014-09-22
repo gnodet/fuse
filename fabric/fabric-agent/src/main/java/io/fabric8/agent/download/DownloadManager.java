@@ -20,11 +20,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.concurrent.ExecutorService;
 
-import io.fabric8.agent.mvn.MavenConfiguration;
-import io.fabric8.agent.mvn.MavenRepositoryURL;
+import io.fabric8.maven.util.MavenConfiguration;
+import io.fabric8.maven.util.MavenRepositoryURL;
 
-import static io.fabric8.agent.download.DownloadManagerHelper.removeInlinedMavenRepositoryUrl;
-import static io.fabric8.agent.download.DownloadManagerHelper.stripInlinedMavenRepositoryUrl;
 import static io.fabric8.agent.download.DownloadManagerHelper.stripUrl;
 
 public class DownloadManager {
