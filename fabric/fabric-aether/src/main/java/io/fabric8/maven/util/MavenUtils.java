@@ -30,6 +30,8 @@ import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.sonatype.aether.repository.*;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;

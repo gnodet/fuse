@@ -143,14 +143,6 @@
             <artifactId>aether-connector-wagon</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.sonatype.plexus</groupId>
-            <artifactId>plexus-cipher</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonatype.plexus</groupId>
-            <artifactId>plexus-sec-dispatcher</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.maven.wagon</groupId>
             <artifactId>wagon-file</artifactId>
         </dependency>
@@ -229,8 +221,6 @@
                             org.sonatype.*
                             org.apache.maven*;version=${maven-version},
                             org.codehaus.*;version=${codehaus-plexus-version},
-                            org.sonatype.plexus.components.cipher.*;version=${sonatype-plexus-cipher-version},
-                            org.sonatype.plexus.components.sec.*;version=${sonatype-plexus-sec-version},
                         </Export-Package>
                         <Conditional-Package>org.eclipse.aether</Conditional-Package>
                     </instructions>
