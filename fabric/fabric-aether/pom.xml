@@ -224,7 +224,7 @@
                             io.fabric8.aether.*;version=${project.version},
                             io.fabric8.maven*;version=${project.version},
                             org.eclipse.*,
-                            org.apache.*,
+                            org.apache.maven.*,
                             org.codehaus.*,
                             org.sonatype.*
                             org.apache.maven*;version=${maven-version},

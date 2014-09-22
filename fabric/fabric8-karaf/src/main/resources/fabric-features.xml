@@ -107,10 +107,12 @@
         <bundle>mvn:io.fabric8/common-util/${project.version}</bundle>
         <bundle>mvn:io.fabric8/fabric-aether/${project.version}</bundle>
         <bundle>mvn:io.fabric8/process-manager/${project.version}</bundle>
-        <bundle>mvn:org.ops4j.base/ops4j-base-net/${ops4j-base.version}</bundle>
-        <bundle>mvn:org.ops4j.base/ops4j-base-monitors/${ops4j-base.version}</bundle>
-        <bundle>mvn:org.ops4j.base/ops4j-base-util-property/${ops4j-base.version}</bundle>
-        <bundle>mvn:com.google.guava/guava/${guava-version}</bundle>
+        <bundle dependency='true'>mvn:org.ops4j.base/ops4j-base-net/${ops4j-base.version}</bundle>
+        <bundle dependency='true'>mvn:org.ops4j.base/ops4j-base-monitors/${ops4j-base.version}</bundle>
+        <bundle dependency='true'>mvn:org.ops4j.base/ops4j-base-util-property/${ops4j-base.version}</bundle>
+        <bundle dependency='true'>mvn:org.ops4j.pax.swissbox/pax-swissbox-optional-jcl/${ops4j-pax-swissbox-optional-jcl.version}</bundle>
+        <bundle dependency='true'>mvn:org.ops4j.pax.swissbox/pax-swissbox-property/${ops4j-pax-swissbox-property.version}</bundle>
+        <bundle dependency='true'>mvn:com.google.guava/guava/${guava-version}</bundle>
     </feature>
 
     <feature name="process-fabric" version="${project.version}" resolver="(obr)">

@@ -39,7 +39,6 @@
         </fuse.osgi.import>
         <fuse.osgi.private.pkg>
             io.fabric8.utils;
-            io.fabric8.maven.util;
             io.fabric8.maven.impl;
                 -split-package:=first,
         </fuse.osgi.private.pkg>
