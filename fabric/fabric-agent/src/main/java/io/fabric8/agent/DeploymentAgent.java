@@ -138,7 +138,6 @@ public class DeploymentAgent implements ManagedService {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor(new NamedThreadFactory("fabric-agent"));
     private final ExecutorService downloadExecutor;
-    private DownloadManager manager;
     private boolean resolveOptionalImports = false;
     private long urlHandlersTimeout = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
 
@@ -178,7 +177,6 @@ public class DeploymentAgent implements ManagedService {
         this.downloadExecutor = createDownloadExecutor();
 
         MavenConfigurationImpl config = new MavenConfigurationImpl(new PropertiesPropertyResolver(System.getProperties()), "org.ops4j.pax.url.mvn");
-        manager = new DownloadManager(config, getDownloadExecutor());
         fabricService = new ServiceTracker<FabricService, FabricService>(systemBundleContext, FabricService.class, new ServiceTrackerCustomizer<FabricService, FabricService>() {
             @Override
             public FabricService addingService(ServiceReference<FabricService> reference) {
@@ -247,7 +245,6 @@ public class DeploymentAgent implements ManagedService {
         // update itself and this would cause a deadlock
         executor.shutdownNow();
         downloadExecutor.shutdownNow();
-        manager.shutdown();
         fabricService.close();
     }
 
@@ -404,7 +401,7 @@ public class DeploymentAgent implements ManagedService {
         PropertiesPropertyResolver syspropsResolver = new PropertiesPropertyResolver(System.getProperties());
         DictionaryPropertyResolver propertyResolver = new DictionaryPropertyResolver(props, syspropsResolver);
         final MavenConfigurationImpl config = new MavenConfigurationImpl(propertyResolver, "org.ops4j.pax.url.mvn");
-        manager = new DownloadManager(config, getDownloadExecutor());
+        DownloadManager manager = new DownloadManager(config, getDownloadExecutor());
         Map<String, String> properties = new HashMap<String, String>();
         for (Enumeration e = props.keys(); e.hasMoreElements();) {
             Object key = e.nextElement();
@@ -431,7 +428,7 @@ public class DeploymentAgent implements ManagedService {
         for (String key : properties.keySet()) {
             if (key.equals("framework")) {
                 String url = properties.get(key);
-                restart |= updateFramework(configProps, url);
+                restart |= updateFramework(manager, configProps, url);
             } else if (key.startsWith("config.")) {
                 String k = key.substring("config.".length());
                 String v = properties.get(key);
@@ -596,7 +593,7 @@ public class DeploymentAgent implements ManagedService {
         Set<String> ignoredBundles = getPrefixedProperties(properties, "ignore.");
         Map<String, StreamProvider> providers = builder.getProviders();
         Map<Resource, List<Wire>> wiring = builder.getWiring();
-        install(allResources, ignoredBundles, providers, wiring);
+        install(manager, allResources, ignoredBundles, providers, wiring);
         installFeatureConfigs(bundleContext, downloadedResources);
         return true;
     }
@@ -675,7 +672,7 @@ public class DeploymentAgent implements ManagedService {
         return result;
     }
 
-    private void install(Collection<Resource> allResources, Collection<String> ignoredBundles, Map<String, StreamProvider> providers, Map<Resource, List<Wire>> wiring) throws Exception {
+    private void install(DownloadManager manager, Collection<Resource> allResources, Collection<String> ignoredBundles, Map<String, StreamProvider> providers, Map<Resource, List<Wire>> wiring) throws Exception {
         updateStatus("installing", null, allResources, false);
         Map<Resource, Bundle> resToBnd = new HashMap<Resource, Bundle>();
 
@@ -708,7 +705,7 @@ public class DeploymentAgent implements ManagedService {
                                 // if the checksum are different
                                 InputStream is = null;
                                 try {
-                                    is = getBundleInputStream(res, providers);
+                                    is = getBundleInputStream(manager, res, providers);
                                     long newCrc = ChecksumUtils.checksum(is);
                                     long oldCrc = bundleChecksums.containsKey(bundle.getLocation()) ? Long.parseLong(bundleChecksums.get(bundle.getLocation())) : 0l;
                                     if (newCrc != oldCrc) {
@@ -765,7 +762,7 @@ public class DeploymentAgent implements ManagedService {
         if (agentResource != null) {
             LOGGER.info("Updating agent");
             LOGGER.info("  " + getUri(agentResource));
-            InputStream is = getBundleInputStream(agentResource, providers);
+            InputStream is = getBundleInputStream(manager, agentResource, providers);
             Bundle bundle = bundleContext.getBundle();
             //We need to store the agent checksum and save before we update the agent.
             if (newCheckums.containsKey(bundle.getLocation())) {
@@ -820,20 +817,20 @@ public class DeploymentAgent implements ManagedService {
             Bundle bundle = entry.getKey();
             Resource resource = entry.getValue();
             LOGGER.info("  " + getUri(resource));
-            InputStream is = getBundleInputStream(resource, providers);
+            InputStream is = getBundleInputStream(manager, resource, providers);
             bundle.update(is);
             toRefresh.add(bundle);
         }
         LOGGER.info("Installing bundles:");
         for (Resource resource : toInstall) {
             LOGGER.info("  " + getUri(resource));
-            InputStream is = getBundleInputStream(resource, providers);
+            InputStream is = getBundleInputStream(manager, resource, providers);
             Bundle bundle = systemBundleContext.installBundle(getUri(resource), is);
             toRefresh.add(bundle);
             resToBnd.put(resource, bundle);
             // save a checksum of installed snapshot bundle
             if (bundle.getVersion().getQualifier().endsWith(SNAPSHOT) && !newCheckums.containsKey(bundle.getLocation())) {
-                newCheckums.put(bundle.getLocation(), Long.toString(ChecksumUtils.checksum(getBundleInputStream(resource, providers))));
+                newCheckums.put(bundle.getLocation(), Long.toString(ChecksumUtils.checksum(getBundleInputStream(manager, resource, providers))));
             }
         }
 
@@ -1024,7 +1021,7 @@ public class DeploymentAgent implements ManagedService {
         sorted.add(resource);
     }
 
-    protected InputStream getBundleInputStream(Resource resource, Map<String, StreamProvider> providers) throws IOException {
+    protected InputStream getBundleInputStream(DownloadManager manager, Resource resource, Map<String, StreamProvider> providers) throws IOException {
         String uri = getUri(resource);
         if (uri == null) {
             throw new IllegalStateException("Resource has no uri");
@@ -1203,7 +1200,7 @@ public class DeploymentAgent implements ManagedService {
         }
     }
 
-    protected boolean updateFramework(Properties properties, String url) throws Exception {
+    protected boolean updateFramework(DownloadManager manager, Properties properties, String url) throws Exception {
         if (!url.startsWith("mvn:")) {
             throw new IllegalArgumentException("Framework url must use the mvn: protocol");
         }

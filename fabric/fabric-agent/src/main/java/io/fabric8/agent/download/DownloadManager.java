@@ -36,8 +36,6 @@ public class DownloadManager {
      * Service configuration.
      */
     private final MavenConfiguration configuration;
-    private final MavenRepositoryURL cache;
-    private final MavenRepositoryURL system;
     private boolean downloadFilesFromProfile = true;
     private File tmpPath;
 
@@ -50,8 +48,6 @@ public class DownloadManager {
         this.executor = executor;
         String karafRoot = System.getProperty("karaf.home", "karaf");
         String karafData = System.getProperty("karaf.data", karafRoot + "/data");
-        this.cache = new MavenRepositoryURL("file:" + karafData + File.separator + "maven" + File.separator + "agent" + "@snapshots");
-        this.system = new MavenRepositoryURL("file:" + karafRoot + File.separator + "system" + "@snapshots");
         this.tmpPath = new File(karafData, "tmp");
     }
 
@@ -83,7 +79,7 @@ public class DownloadManager {
 //                mvnUrl = removeInlinedMavenRepositoryUrl(mvnUrl);
 //            }
 
-            MavenDownloadTask task = new MavenDownloadTask(mvnUrl, cache, system, inlined, configuration, executor);
+            MavenDownloadTask task = new MavenDownloadTask(mvnUrl, configuration, executor);
             executor.submit(task);
             if (!mvnUrl.equals(url)) {
                 final DummyDownloadTask download = new DummyDownloadTask(url, executor);
