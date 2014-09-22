@@ -15,7 +15,9 @@
  */
 package io.fabric8.aether;
 
+import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.authentication.AuthenticationException;
 import org.apache.maven.wagon.providers.file.FileWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
@@ -38,13 +40,27 @@ public class StaticWagonProvider implements WagonProvider {
             return new FileWagon();
         }
         if ("http".equals(roleHint)) {
-            LightweightHttpWagon wagon = new LightweightHttpWagon();
+            // TODO: remove this fix when WAGON-416 is released
+            LightweightHttpWagon wagon = new LightweightHttpWagon() {
+                @Override
+                protected void openConnectionInternal() throws ConnectionException, AuthenticationException {
+                    proxyInfo = getProxyInfo( "http", getRepository().getHost() );
+                    super.openConnectionInternal();
+                }
+            };
             wagon.setTimeout(timeout);
             wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
             return wagon;
         }
         if ("https".equals(roleHint)) {
-            LightweightHttpsWagon wagon = new LightweightHttpsWagon();
+            // TODO: remove this fix when WAGON-416 is released
+            LightweightHttpsWagon wagon = new LightweightHttpsWagon() {
+                @Override
+                protected void openConnectionInternal() throws ConnectionException, AuthenticationException {
+                    proxyInfo = getProxyInfo( "http", getRepository().getHost() );
+                    super.openConnectionInternal();
+                }
+            };
             wagon.setTimeout(timeout);
             wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
             return wagon;
