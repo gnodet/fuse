@@ -13,12 +13,12 @@
  *  implied.  See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-package io.fabric8.maven;
+package io.fabric8.maven.proxy;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import io.fabric8.maven.impl.InvalidMavenArtifactRequest;
+import io.fabric8.maven.proxy.impl.InvalidMavenArtifactRequest;
 
 public interface MavenProxy {
 

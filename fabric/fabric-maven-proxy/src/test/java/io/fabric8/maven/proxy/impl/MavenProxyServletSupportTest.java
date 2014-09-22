@@ -13,7 +13,7 @@
  *  implied.  See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-package io.fabric8.maven.impl;
+package io.fabric8.maven.proxy.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,10 +40,6 @@ import io.fabric8.api.RuntimeProperties;
 import io.fabric8.api.scr.AbstractRuntimeProperties;
 
 import io.fabric8.deployer.ProjectDeployer;
-import io.fabric8.maven.impl.InvalidMavenArtifactRequest;
-import io.fabric8.maven.impl.MavenDownloadProxyServlet;
-import io.fabric8.maven.impl.MavenProxyServletSupport;
-import io.fabric8.maven.impl.MavenUploadProxyServlet;
 import org.apache.commons.io.FileUtils;
 import org.easymock.EasyMock;
 import org.eclipse.jetty.server.Handler;
@@ -57,7 +53,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.sonatype.aether.repository.RemoteRepository;
 
-import static io.fabric8.maven.impl.MavenProxyServletSupport.*;
+import static io.fabric8.maven.proxy.impl.MavenProxyServletSupport.*;
 import static org.junit.Assert.*;
 
 public class MavenProxyServletSupportTest {

@@ -31,7 +31,7 @@
 
     <properties>
         <fuse.osgi.export>
-            io.fabric8.maven;version=${project.version},
+            io.fabric8.maven.proxy;version=${project.version},
         </fuse.osgi.export>
         <fuse.osgi.import>
             org.slf4j*,
@@ -39,7 +39,7 @@
         </fuse.osgi.import>
         <fuse.osgi.private.pkg>
             io.fabric8.utils;
-            io.fabric8.maven.impl;
+            io.fabric8.maven.proxy.impl;
                 -split-package:=first,
         </fuse.osgi.private.pkg>
     </properties>

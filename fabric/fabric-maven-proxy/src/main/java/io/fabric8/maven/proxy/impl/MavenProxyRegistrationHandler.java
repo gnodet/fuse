@@ -13,7 +13,7 @@
  *  implied.  See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-package io.fabric8.maven.impl;
+package io.fabric8.maven.proxy.impl;
 
 import io.fabric8.api.RuntimeProperties;
 import io.fabric8.api.jcip.GuardedBy;
@@ -22,7 +22,7 @@ import io.fabric8.api.scr.AbstractComponent;
 import io.fabric8.api.scr.Configurer;
 import io.fabric8.api.scr.ValidatingReference;
 import io.fabric8.deployer.ProjectDeployer;
-import io.fabric8.maven.MavenProxy;
+import io.fabric8.maven.proxy.MavenProxy;
 import io.fabric8.zookeeper.ZkPath;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.state.ConnectionState;

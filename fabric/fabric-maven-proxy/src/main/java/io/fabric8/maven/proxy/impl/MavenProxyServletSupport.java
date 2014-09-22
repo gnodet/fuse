@@ -13,7 +13,7 @@
  *  implied.  See the License for the specific language governing
  *  permissions and limitations under the License.
  */
-package io.fabric8.maven.impl;
+package io.fabric8.maven.proxy.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +48,7 @@ import io.fabric8.deployer.ProjectDeployer;
 import io.fabric8.deployer.dto.DependencyDTO;
 import io.fabric8.deployer.dto.DeployResults;
 import io.fabric8.deployer.dto.ProjectRequirements;
-import io.fabric8.maven.MavenProxy;
+import io.fabric8.maven.proxy.MavenProxy;
 import io.fabric8.maven.util.MavenUtils;
 import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -67,7 +67,6 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.MetadataRequest;
 import org.eclipse.aether.resolution.MetadataResult;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 
 public class MavenProxyServletSupport extends HttpServlet implements MavenProxy {
