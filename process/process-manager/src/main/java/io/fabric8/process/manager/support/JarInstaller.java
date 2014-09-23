@@ -34,14 +34,14 @@ import io.fabric8.process.manager.InstallContext;
 import io.fabric8.process.manager.InstallOptions;
 import io.fabric8.process.manager.InstallTask;
 import io.fabric8.process.manager.config.ProcessConfig;
+import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.graph.Dependency;
-import org.sonatype.aether.graph.DependencyNode;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
 
 import java.io.File;
 import java.io.FileOutputStream;
