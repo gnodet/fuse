@@ -22,14 +22,28 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
+import io.fabric8.aether.DependencyFilters;
+import io.fabric8.aether.DuplicateTransformer;
+import io.fabric8.aether.FailedToResolveDependency;
+import io.fabric8.aether.MavenResolver;
+import io.fabric8.aether.PomDetails;
+import io.fabric8.aether.ReplaceConflictingVersionResolver;
 import io.fabric8.aether.StaticWagonProvider;
+import io.fabric8.common.util.Filter;
+import io.fabric8.common.util.Filters;
+import io.fabric8.common.util.IOHelpers;
 import io.fabric8.maven.util.MavenConfiguration;
 import io.fabric8.maven.util.MavenRepositoryURL;
-import io.fabric8.maven.util.MavenUtils;
+import io.fabric8.maven.util.decrypt.MavenSettingsDecrypter;
+import org.apache.maven.model.Model;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Server;
@@ -45,9 +59,20 @@ import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.ArtifactProperties;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.DependencyCollectionContext;
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.collection.DependencyGraphTransformationContext;
+import org.eclipse.aether.collection.DependencyGraphTransformer;
+import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.wagon.WagonProvider;
 import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
+import org.eclipse.aether.graph.DefaultDependencyNode;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.LocalRepository;
@@ -56,12 +81,19 @@ import org.eclipse.aether.repository.Proxy;
 import org.eclipse.aether.repository.ProxySelector;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
+import org.eclipse.aether.resolution.ArtifactDescriptorResult;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.VersionRangeRequest;
 import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
+import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
+import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
@@ -69,6 +101,7 @@ import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.Version;
 import org.eclipse.aether.version.VersionConstraint;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.fabric8.maven.util.Parser.VERSION_LATEST;
@@ -76,11 +109,13 @@ import static io.fabric8.maven.util.Parser.VERSION_LATEST;
 /**
  * Aether based, drop in replacement for mvn protocol
  */
-public class AetherBasedResolver {
+public class AetherBasedResolver implements MavenResolver {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(AetherBasedResolver.class);
     private static final String LATEST_VERSION_RANGE = "(0.0,]";
     private static final String REPO_TYPE = "default";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AetherBasedResolver.class);
 
     final private RepositorySystem m_repoSystem;
     final private MavenConfiguration m_config;
@@ -98,8 +133,7 @@ public class AetherBasedResolver {
      * @throws java.net.MalformedURLException
      *             in case of url problems in configuration.
      */
-    public AetherBasedResolver( final MavenConfiguration configuration )
-        throws MalformedURLException {
+    public AetherBasedResolver( final MavenConfiguration configuration ) {
         m_config = configuration;
         m_settings = configuration.getSettings();
         m_repoSystem = newRepositorySystem();
@@ -178,6 +212,12 @@ public class AetherBasedResolver {
                 .add( mirror.getName(), mirror.getUrl(), null, false, mirror.getMirrorOf(), "*" );
         }
         return selector;
+    }
+
+    public List<RemoteRepository> getRepositories() {
+        List<RemoteRepository> repos = selectRepositories();
+        assignProxyAndMirrors(repos);
+        return repos;
     }
 
     private List<RemoteRepository> selectRepositories() {
@@ -297,11 +337,17 @@ public class AetherBasedResolver {
      * Resolve maven artifact as file in repository.
      */
     public File resolveFile( String groupId, String artifactId, String classifier,
-        String extension, String version ) throws IOException {
+                             String extension, String version ) throws IOException {
         // version = mapLatestToRange( version );
 
         Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
+        return resolveFile( artifact );
+    }
 
+    /**
+     * Resolve maven artifact as file in repository.
+     */
+    public File resolveFile( Artifact artifact ) throws IOException {
         List<LocalRepository> defaultRepos = selectDefaultRepositories();
         List<RemoteRepository> remoteRepos = selectRepositories();
         assignProxyAndMirrors( remoteRepos );
@@ -392,7 +438,7 @@ public class AetherBasedResolver {
         return artifact;
     }
 
-    private RepositorySystemSession newSession(LocalRepository repo) {
+    private DefaultRepositorySystemSession newSession(LocalRepository repo) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
         if( repo != null ) {
@@ -415,13 +461,20 @@ public class AetherBasedResolver {
         if( null != updatePolicy ) {
             session.setUpdatePolicy( updatePolicy );
         }
-        
+
+        String checksumPolicy = m_config.getGlobalChecksumPolicy();
+        if( null != checksumPolicy ) {
+            session.setChecksumPolicy(checksumPolicy);
+        }
+
         for (Server server : m_settings.getServers()) {
             if (server.getConfiguration() != null
                 && ((Xpp3Dom)server.getConfiguration()).getChild("httpHeaders") != null) {
                 addServerConfig(session, server);
             }
         }
+
+        session.setOffline( m_config.isOffline() );
 
         return session;
     }
@@ -451,7 +504,7 @@ public class AetherBasedResolver {
     }
 
     private Authentication getAuthentication( String repoId ) {
-        Server server = m_settings.getServer( repoId );
+        Server server = m_settings.getServer(repoId);
         if (server != null && server.getUsername() != null) {
             AuthenticationBuilder authBuilder = new AuthenticationBuilder();
             authBuilder.addUsername( server.getUsername() ).addPassword( server.getPassword() );
@@ -464,11 +517,204 @@ public class AetherBasedResolver {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
 
         locator.setServices( WagonProvider.class, new StaticWagonProvider( m_config.getTimeout() ) );
-//        locator.addService( TransporterFactory.class, WagonTransporterFactory.class );
         locator.addService( RepositoryConnectorFactory.class, WagonRepositoryConnectorFactory.class );
 
-        decrypter = MavenUtils.createSettingsDecrypter( m_config.getSecuritySettings() );
+        decrypter = new MavenSettingsDecrypter( m_config.getSecuritySettings() );
         locator.setServices( SettingsDecrypter.class, decrypter );
-        return locator.getService( RepositorySystem.class );
+        return locator.getService(RepositorySystem.class);
+    }
+
+    /**
+     * Collects the dependency tree for the given file by extracting its pom.xml file
+     */
+    public DependencyNode collectDependenciesForJar(File jarFile, Filter<Dependency> excludeDependencyFilter) throws RepositoryException, IOException {
+        // lets find the pom file
+        PomDetails pomDetails = findPomFile(jarFile);
+        if (pomDetails == null || !pomDetails.isValid()) {
+            throw new IllegalArgumentException("No pom.xml file could be found inside the jar file: " + jarFile);
+        }
+        return collectDependencies(pomDetails, excludeDependencyFilter);
+    }
+
+    public DependencyNode collectDependencies(PomDetails pomDetails, Filter<Dependency> excludeDependencyFilter) throws IOException, RepositoryException {
+        Model model = pomDetails.getModel();
+        return collectDependenciesFromPom(pomDetails.getFile(), model, excludeDependencyFilter);
+    }
+
+
+    protected DependencyNode collectDependenciesFromPom(File rootPom, Model model, Filter<Dependency> excludeDependencyFilter) throws RepositoryException, IOException {
+        Map<String, String> props = Collections.singletonMap(ArtifactProperties.LOCAL_PATH, rootPom.toString());
+
+        // lets load the model so we can get the version which is required for the transformer...
+        String groupId = model.getGroupId();
+        String artifactId = model.getArtifactId();
+        String pomVersion = model.getVersion();
+        String packaging = "pom";
+        if (groupId == null || artifactId == null || pomVersion == null) {
+            throw new IllegalArgumentException("Pomegranate pom.xml has missing groupId:artifactId:version " + groupId + ":" + artifactId + ":" + pomVersion);
+        }
+        Artifact root = new DefaultArtifact(groupId, artifactId, null, packaging, pomVersion, props, rootPom);
+
+        return collectDependencies(root, pomVersion, excludeDependencyFilter);
+    }
+
+    protected DependencyNode collectDependencies(Artifact root, String pomVersion, final Filter<Dependency> excludeDependencyFilter) throws RepositoryException, IOException {
+        final DefaultRepositorySystemSession session = newSession(null);
+        List<RemoteRepository> repos = selectRepositories();
+        assignProxyAndMirrors(repos);
+
+        ArtifactDescriptorResult artifactDescriptorResult = m_repoSystem.readArtifactDescriptor(session, new ArtifactDescriptorRequest(root, repos, null));
+        repos.addAll(artifactDescriptorResult.getRepositories());
+
+        Dependency rootDependency = new Dependency(root, null);
+
+        List<Dependency> dependencies = artifactDescriptorResult.getDependencies();
+
+        final DefaultDependencyNode rootNode = new DefaultDependencyNode(rootDependency);
+        GenericVersionScheme versionScheme = new GenericVersionScheme();
+        rootNode.setVersion(versionScheme.parseVersion(pomVersion));
+        rootNode.setVersionConstraint(versionScheme.parseVersionConstraint(pomVersion));
+        DependencyNode pomNode = rootNode;
+
+        //final Filter<Dependency> shouldExclude = Filters.or(DependencyFilters.testScopeFilter, excludeDependencyFilter, new NewerVersionExistsFilter(rootNode));
+        final Filter<Dependency> shouldExclude = Filters.or(DependencyFilters.testScopeFilter, excludeDependencyFilter);
+        DependencySelector dependencySelector = new AndDependencySelector(
+                new ScopeDependencySelector("test"),
+                new ExclusionDependencySelector(),
+                new DependencySelector() {
+                    @Override
+                    public DependencySelector deriveChildSelector(DependencyCollectionContext context) {
+                        return this;
+                    }
+
+                    @Override
+                    public boolean selectDependency(Dependency dependency) {
+                        try {
+                            return !DependencyFilters.matches(dependency, shouldExclude);
+                        } catch (Exception e) {
+                            failedToMakeDependencyTree(dependency, e);
+                            return false;
+                        }
+                    }
+                });
+        session.setDependencySelector(dependencySelector);
+
+        // TODO no idea why we have to iterate through the dependencies; why can't we just
+        // work on the root dependency directly?
+        if (true) {
+            for (Dependency dependency : dependencies) {
+                DependencyNode node = resolveDependencies(session, repos, pomNode, dependency, shouldExclude);
+                if (node != null) {
+                    pomNode.getChildren().add(node);
+                }
+            }
+        } else {
+            DependencyNode node = resolveDependencies(session, repos, pomNode, rootDependency, shouldExclude);
+            if (node != null) {
+                pomNode = node;
+            }
+        }
+
+        // now lets transform the dependency tree to remove different versions for the same artifact
+        final DependencyGraphTransformationContext tranformContext = new DependencyGraphTransformationContext() {
+            Map map = new HashMap();
+
+            public RepositorySystemSession getSession() {
+                return session;
+            }
+
+            public Object get(Object key) {
+                return map.get(key);
+            }
+
+            public Object put(Object key, Object value) {
+                return map.put(key, value);
+            }
+        };
+
+        DependencyGraphTransformer transformer = new ReplaceConflictingVersionResolver();
+        pomNode = transformer.transformGraph(pomNode, tranformContext);
+
+        transformer = new DuplicateTransformer();
+        pomNode = transformer.transformGraph(pomNode, tranformContext);
+
+        return pomNode;
+    }
+
+    public PomDetails findPomFile(File jar) throws IOException {
+        JarFile jarFile = new JarFile(jar);
+        File file = null;
+        Properties properties = null;
+        Enumeration<JarEntry> entries = jarFile.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            String name = entry.getName();
+            if (name.matches("META-INF/maven/.*/.*/pom.xml")) {
+                InputStream in = jarFile.getInputStream(entry);
+                // lets create a temporary file
+                file = File.createTempFile("fabric-pomegranate-", ".pom.xml");
+                IOHelpers.writeTo(file, in);
+            } else if (name.matches("META-INF/maven/.*/.*/pom.properties")) {
+                InputStream in = jarFile.getInputStream(entry);
+                properties = new Properties();
+                properties.load(in);
+            }
+            if (file != null && properties != null) {
+                break;
+            }
+        }
+        return new PomDetails(file, properties);
+    }
+
+    protected DependencyNode resolveDependencies(RepositorySystemSession session, List<RemoteRepository> repos, DependencyNode pomNode, Dependency dependency, final Filter<Dependency> shouldExclude) throws FailedToResolveDependency {
+        if (!DependencyFilters.matches(dependency, shouldExclude)) {
+            CollectRequest cr = new CollectRequest(dependency, repos);
+            //request.setRequestContext("runtime");
+            try {
+                DependencyNode node = m_repoSystem.collectDependencies(session, cr).getRoot();
+                DependencyFilter filter = new DependencyFilter() {
+                    public boolean accept(DependencyNode node, List<DependencyNode> parents) {
+                        return !DependencyFilters.matches(node, shouldExclude);
+                    }
+                };
+                DependencyRequest request = new DependencyRequest(cr, filter);
+                m_repoSystem.resolveDependencies(session, request);
+                return node;
+            } catch (DependencyCollectionException e) {
+                handleDependencyResolveFailure(pomNode, dependency, e);
+            } catch (DependencyResolutionException e) {
+                handleDependencyResolveFailure(pomNode, dependency, e);
+            }
+        }
+        return null;
+    }
+
+    private boolean throwExceptionsOnResolveDependencyFailure;
+
+    protected void handleDependencyResolveFailure(DependencyNode pomNode, Dependency dependency, Exception e) throws FailedToResolveDependency {
+        FailedToResolveDependency exception = new FailedToResolveDependency(dependency, e);
+        if (throwExceptionsOnResolveDependencyFailure) {
+            throw exception;
+        } else {
+            LOGGER.warn(exception.getMessage(), e);
+
+            // lets just add the current dependency without its full dependency tree
+            DefaultDependencyNode node = new DefaultDependencyNode(dependency);
+            pomNode.getChildren().add(node);
+        }
+    }
+
+    protected void failedToMakeDependencyTree(Object dependency, Exception e) {
+        LOGGER.warn("Failed to make Dependency for " + dependency + ". " + e, e);
+    }
+
+    @Override
+    public RepositorySystem getRepositorySystem() {
+        return m_repoSystem;
+    }
+
+    @Override
+    public RepositorySystemSession createSession() {
+        return newSession( null );
     }
 }

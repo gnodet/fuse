@@ -43,7 +43,7 @@ public class MavenSettingsDecrypter implements SettingsDecrypter {
 
     private SecDispatcher securityDispatcher;
 
-    public MavenSettingsDecrypter(File securitySettings) {
+    public MavenSettingsDecrypter(String securitySettings) {
         this.securityDispatcher = new MavenSecurityDispatcher(securitySettings);
     }
 

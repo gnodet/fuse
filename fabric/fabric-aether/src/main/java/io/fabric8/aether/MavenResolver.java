@@ -17,25 +17,27 @@ package io.fabric8.aether;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import io.fabric8.common.util.Filter;
 import org.eclipse.aether.RepositoryException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.graph.Dependency;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.repository.RemoteRepository;
 
 public interface MavenResolver {
 
-    File resolveFile(Artifact artifact) throws ArtifactResolutionException;
+    File resolveFile(Artifact artifact) throws IOException;
 
-    DependencyTreeResult collectDependencies(PomDetails details, boolean offline, Filter<Dependency> excludeDependencyFilter) throws IOException, RepositoryException;
+    DependencyNode collectDependenciesForJar(File artifactFile, Filter<Dependency> excludeFilter) throws IOException, RepositoryException;
 
-    DependencyTreeResult collectDependencies(VersionedDependencyId id, boolean offline, Filter<Dependency> excludeDependencyFilter) throws IOException, RepositoryException;
+    RepositorySystem getRepositorySystem();
 
-    PomDetails findPomFile(File fileJar) throws IOException;
+    RepositorySystemSession createSession();
 
+    List<RemoteRepository> getRepositories();
 
-    DependencyTreeResult collectDependenciesForJar(File artifactFile, boolean offline, Filter<Dependency> excludeFilter) throws RepositoryException, IOException;
-
-    Artifact resolveArtifact(boolean offline, String groupId, String artifactId, String version, String classifier, String jar) throws ArtifactResolutionException;
 }

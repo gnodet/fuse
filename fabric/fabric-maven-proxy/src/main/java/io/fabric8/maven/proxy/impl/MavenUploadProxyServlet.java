@@ -15,6 +15,7 @@
  */
 package io.fabric8.maven.proxy.impl;
 
+import io.fabric8.aether.MavenResolver;
 import io.fabric8.api.RuntimeProperties;
 import io.fabric8.deployer.ProjectDeployer;
 import io.fabric8.deployer.dto.DeployResults;
@@ -31,8 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class MavenUploadProxyServlet extends MavenDownloadProxyServlet {
 
-    public MavenUploadProxyServlet(RuntimeProperties runtimeProperties, String localRepository, List<String> remoteRepositories, boolean appendSystemRepos, String updatePolicy, String checksumPolicy, String proxyProtocol, String proxyHost, int proxyPort, String proxyUsername, String proxyPassword, String proxyNonProxyHosts, ProjectDeployer projectDeployer) {
-        super(runtimeProperties, localRepository, remoteRepositories, appendSystemRepos, updatePolicy, checksumPolicy, proxyProtocol, proxyHost, proxyPort, proxyUsername, proxyPassword, proxyNonProxyHosts, projectDeployer);
+    public MavenUploadProxyServlet(MavenResolver resolver, RuntimeProperties runtimeProperties, ProjectDeployer projectDeployer) {
+        super(resolver, runtimeProperties, projectDeployer);
     }
 
     @Override

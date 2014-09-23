@@ -94,9 +94,8 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
      */
     public MavenConfigurationImpl(final PropertyResolver propertyResolver, final String pid) {
         NullArgumentException.validateNotNull(propertyResolver, "Property resolver");
-        NullArgumentException.validateNotEmpty(pid, true, "Configuration pid");
 
-        m_pid = pid;
+        m_pid = pid == null ? "" : pid + ".";
         m_propertyResolver = propertyResolver;
         settings = buildSettings(getLocalRepoPath(propertyResolver), getSettingsPath(),
             useFallbackRepositories());
@@ -107,9 +106,22 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
     }
 
     /**
+     * @see MavenConfiguration#isOffline()
+     */
+    public boolean isOffline() {
+        if (!contains(m_pid + ServiceConstants.PROPERTY_OFFLINE)) {
+            return set(
+                    m_pid + ServiceConstants.PROPERTY_OFFLINE,
+                    Boolean.valueOf(m_propertyResolver.get(m_pid
+                            + ServiceConstants.PROPERTY_OFFLINE)));
+        }
+        return get(m_pid + ServiceConstants.PROPERTY_OFFLINE);
+    }
+
+    /**
      * @see MavenConfiguration#getCertificateCheck()
      */
-    public Boolean getCertificateCheck() {
+    public boolean getCertificateCheck() {
         if (!contains(m_pid + ServiceConstants.PROPERTY_CERTIFICATE_CHECK)) {
             return set(
                 m_pid + ServiceConstants.PROPERTY_CERTIFICATE_CHECK,
@@ -289,6 +301,19 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
 
     public String getGlobalUpdatePolicy() {
         final String propertyName = m_pid + ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY;
+        if (contains(propertyName)) {
+            return get(propertyName);
+        }
+        final String propertyValue = m_propertyResolver.get(propertyName);
+        if (propertyValue != null) {
+            set(propertyName, propertyValue);
+            return propertyValue;
+        }
+        return null;
+    }
+
+    public String getGlobalChecksumPolicy() {
+        final String propertyName = m_pid + ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY;
         if (contains(propertyName)) {
             return get(propertyName);
         }
@@ -532,7 +557,7 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
     }
 
     private String getLocalRepoPath(PropertyResolver props) {
-        return props.get(ServiceConstants.PID + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
+        return props.get(m_pid + ServiceConstants.PROPERTY_LOCAL_REPOSITORY);
     }
 
     private Settings buildSettings(String localRepoPath, String settingsPath,

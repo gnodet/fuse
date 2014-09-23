@@ -21,18 +21,21 @@ import com.google.common.io.Closeables;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import io.fabric8.aether.DependencyFilters;
-import io.fabric8.aether.DependencyTreeResult;
 import io.fabric8.aether.MavenResolver;
-import io.fabric8.aether.MavenResolverImpl;
 import io.fabric8.common.util.ChecksumUtils;
 import io.fabric8.common.util.FileChangeInfo;
 import io.fabric8.common.util.Filter;
 import io.fabric8.common.util.Pair;
 import io.fabric8.common.util.Strings;
+import io.fabric8.maven.url.ServiceConstants;
+import io.fabric8.maven.url.internal.AetherBasedResolver;
+import io.fabric8.maven.util.MavenConfigurationImpl;
 import io.fabric8.process.manager.InstallContext;
 import io.fabric8.process.manager.InstallOptions;
 import io.fabric8.process.manager.InstallTask;
 import io.fabric8.process.manager.config.ProcessConfig;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.aether.artifact.Artifact;
@@ -61,12 +64,17 @@ public class JarInstaller implements InstallTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(JarInstaller.class);
 
-    MavenResolver mavenResolver = new MavenResolverImpl();
+    private final MavenResolver mavenResolver;
     private final InstallOptions parameters;
     private final Executor executor;
 
     public JarInstaller(InstallOptions parameters, Executor executor) {
+        MavenConfigurationImpl config = new MavenConfigurationImpl(new PropertiesPropertyResolver(System.getProperties()), "org.ops4j.pax.url.mvn");
+        if (parameters.isOffline()) {
+            config.set("org.ops4j.pax.url.mvn" + ServiceConstants.PROPERTY_OFFLINE, "true");
+        }
         this.parameters = parameters;
+        this.mavenResolver = new AetherBasedResolver( config );
         this.executor = executor;
     }
 
@@ -79,9 +87,9 @@ public class JarInstaller implements InstallTask {
         Map<String, Pair<File, File>> copyFiles = new HashMap<String, Pair<File, File>>();
 
         if (artifactUrl != null) {
-            copyArtifactAndDependencies(config, id, installDir, parameters, libDir, copyFiles);
+            copyArtifactAndDependencies(config, id, installDir, libDir, copyFiles);
         }
-        copyJarFiles(id, installDir, parameters, libDir, copyFiles);
+        copyJarFiles(id, installDir, libDir, copyFiles);
 
         Set<Map.Entry<String, Pair<File, File>>> entries = copyFiles.entrySet();
         Map<File, Long> checksums = ChecksumUtils.loadInstalledChecksumCache(libDir);
@@ -125,7 +133,7 @@ public class JarInstaller implements InstallTask {
         }
     }
 
-    protected void copyJarFiles(String id, File installDir, InstallOptions parameters, File libDir, Map<String, Pair<File, File>> copyFiles) throws IOException {
+    protected void copyJarFiles(String id, File installDir, File libDir, Map<String, Pair<File, File>> copyFiles) throws IOException {
         Set<Map.Entry<String, File>> entries = parameters.getJarFiles().entrySet();
         for (Map.Entry<String, File> entry : entries) {
             String location = entry.getKey();
@@ -134,22 +142,21 @@ public class JarInstaller implements InstallTask {
         }
     }
 
-    protected void copyArtifactAndDependencies(ProcessConfig config, String id, File installDir, InstallOptions parameters, File libDir, Map<String, Pair<File, File>> copyFiles) throws Exception {
+    protected void copyArtifactAndDependencies(ProcessConfig config, String id, File installDir, File libDir, Map<String, Pair<File, File>> copyFiles) throws Exception {
         URL artifactUrl = parameters.getUrl();
         // now lets download the executable jar as main.jar and all its dependencies...
         Filter<Dependency> optionalFilter = DependencyFilters.parseExcludeOptionalFilter(join(Arrays.asList(parameters.getOptionalDependencyPatterns()), " "));
         Filter<Dependency> excludeFilter = DependencyFilters.parseExcludeFilter(join(Arrays.asList(parameters.getExcludeDependencyFilterPatterns()), " "), optionalFilter);
-        DependencyTreeResult result = mavenResolver.collectDependenciesForJar(getArtifactFile(artifactUrl),
-                parameters.isOffline(),
-                excludeFilter);
 
-        DependencyNode mainJarDependency = result.getRootNode();
+        DependencyNode mainJarDependency = mavenResolver.collectDependenciesForJar(
+                                                getArtifactFile(artifactUrl), excludeFilter);
 
         Artifact mainPomArtifact = mainJarDependency.getDependency().getArtifact();
-        File mainJar = mavenResolver.resolveArtifact(parameters.isOffline(),
+        Artifact mainJarArtifact = new DefaultArtifact(
                 mainPomArtifact.getGroupId(), mainPomArtifact.getArtifactId(),
-                mainPomArtifact.getVersion(), mainPomArtifact.getClassifier(), "jar").
-                getFile();
+                mainPomArtifact.getClassifier(), "jar",
+                mainPomArtifact.getVersion());
+        File mainJar = mavenResolver.resolveFile(mainJarArtifact);
         if (mainJar == null) {
             System.out.println("Cannot find file for main jar " + mainJarDependency);
         } else {
@@ -226,7 +233,7 @@ public class JarInstaller implements InstallTask {
         return prefix + "mvn:" + artifact.getGroupId() + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() + postfix;
     }
 
-    protected File getFile(DependencyNode node) throws ArtifactResolutionException {
+    protected File getFile(DependencyNode node) throws IOException {
         if (node != null) {
             Dependency dependency = node.getDependency();
             if (dependency != null) {

@@ -22,16 +22,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import io.fabric8.aether.MavenResolver;
-import io.fabric8.aether.MavenResolverImpl;
+import io.fabric8.maven.url.internal.AetherBasedResolver;
+import io.fabric8.maven.util.MavenConfigurationImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
 import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.ops4j.util.property.PropertiesPropertyResolver;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -108,10 +112,11 @@ public class ArchetypeTest {
     }
 
     private void assertArchetypeCreated(String artifactId, String groupId, String version) throws Exception {
-        MavenResolver resolver = new MavenResolverImpl();
-        Artifact artifact = resolver.resolveArtifact(true, groupId, artifactId, version, null, null);
-        assertNotNull("No files resolved for " + artifactId + " version: " + version, artifact);
-        File archetypejar = artifact.getFile();
+        Properties props = new Properties();
+        props.put("offline", "true");
+        MavenConfigurationImpl config = new MavenConfigurationImpl(new PropertiesPropertyResolver(props), null);
+        MavenResolver resolver = new AetherBasedResolver(config);
+        File archetypejar = resolver.resolveFile(new DefaultArtifact(groupId, artifactId, null, null, version));
         assertTrue("archetype jar does not exist", archetypejar.exists());
 
         assertArchetypeCreated(artifactId, groupId, version, archetypejar);

@@ -21,14 +21,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.jar.JarEntry;
@@ -40,18 +36,13 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServlet;
 
-import com.google.common.base.Strings;
-import io.fabric8.aether.MavenRepositorySystemSession;
-import io.fabric8.aether.RepositorySystemFactory;
+import io.fabric8.aether.MavenResolver;
 import io.fabric8.common.util.Files;
 import io.fabric8.deployer.ProjectDeployer;
 import io.fabric8.deployer.dto.DependencyDTO;
 import io.fabric8.deployer.dto.DeployResults;
 import io.fabric8.deployer.dto.ProjectRequirements;
 import io.fabric8.maven.proxy.MavenProxy;
-import io.fabric8.maven.util.MavenUtils;
-import org.eclipse.aether.DefaultRepositoryCache;
-import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
@@ -59,15 +50,9 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.metadata.DefaultMetadata;
 import org.eclipse.aether.metadata.Metadata;
-import org.eclipse.aether.repository.Authentication;
-import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.repository.RepositoryPolicy;
-import org.eclipse.aether.resolution.ArtifactRequest;
-import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.MetadataRequest;
 import org.eclipse.aether.resolution.MetadataResult;
-import org.eclipse.aether.util.repository.AuthenticationBuilder;
 
 public class MavenProxyServletSupport extends HttpServlet implements MavenProxy {
 
@@ -98,39 +83,17 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
 
     protected static final String LOCATION_HEADER = "X-Location";
 
-    protected Map<String, RemoteRepository> repositories;
+    protected List<RemoteRepository> repositories;
     protected RepositorySystem system;
     protected RepositorySystemSession session;
     protected File tmpFolder = new File(System.getProperty("karaf.data") + File.separator + "maven" + File.separator + "proxy" + File.separator + "tmp");
 
-    final String localRepository;
-    final List<String> remoteRepositories;
-    final boolean appendSystemRepos;
-
-    final String updatePolicy;
-    final String checksumPolicy;
-
-    final String proxyProtocol;
-    final String proxyHost;
-    final int proxyPort;
-    final String proxyUsername;
-    final String proxyPassword;
-    final String proxyNonProxyHosts;
-
     final ProjectDeployer projectDeployer;
 
-    public MavenProxyServletSupport(String localRepository, List<String> remoteRepositories, boolean appendSystemRepos, String updatePolicy, String checksumPolicy, String proxyProtocol, String proxyHost, int proxyPort, String proxyUsername, String proxyPassword, String proxyNonProxyHosts, ProjectDeployer projectDeployer) {
-        this.localRepository = localRepository;
-        this.remoteRepositories = remoteRepositories;
-        this.appendSystemRepos = appendSystemRepos;
-        this.updatePolicy = updatePolicy;
-        this.checksumPolicy = checksumPolicy;
-        this.proxyProtocol = proxyProtocol;
-        this.proxyHost = proxyHost;
-        this.proxyPort = proxyPort;
-        this.proxyUsername = proxyUsername;
-        this.proxyPassword = proxyPassword;
-        this.proxyNonProxyHosts = proxyNonProxyHosts;
+    final MavenResolver resolver;
+
+    public MavenProxyServletSupport(MavenResolver resolver, ProjectDeployer projectDeployer) {
+        this.resolver = resolver;
         this.projectDeployer = projectDeployer;
     }
 
@@ -139,41 +102,13 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
             throw new IOException("Failed to create temporary artifact folder");
         }
         if (system == null) {
-            system = newRepositorySystem();
+            system = resolver.getRepositorySystem();
         }
         if (session == null) {
-            session = newSession(system, localRepository);
+            session = resolver.createSession();
         }
-
-        // use a linked map so the repos is added in order
-        repositories = new LinkedHashMap<String, RemoteRepository>();
-
-        if (remoteRepositories != null) {
-            for (String rep : remoteRepositories) {
-                RemoteRepository remoteRepository = createRemoteRepository(rep);
-                remoteRepository.setPolicy(true, new RepositoryPolicy(true, updatePolicy, checksumPolicy));
-                remoteRepository.setProxy(session.getProxySelector().getProxy(remoteRepository));
-                repositories.put(remoteRepository.getId(), remoteRepository);
-            }
-        }
-
-        RemoteRepository local = new RemoteRepository("local", DEFAULT_REPO_ID, "file://" + localRepository);
-        local.setPolicy(true, new RepositoryPolicy(true, updatePolicy, checksumPolicy));
-        repositories.put("local", local);
-
-        RemoteRepository karaf = new RemoteRepository("karaf", DEFAULT_REPO_ID, "file://" + System.getProperty("karaf.home") + File.separator + System.getProperty("karaf.default.repository"));
-        karaf.setPolicy(true, new RepositoryPolicy(true, updatePolicy, checksumPolicy));
-        repositories.put("karaf", karaf);
-
-        RemoteRepository user = new RemoteRepository("user", DEFAULT_REPO_ID, "file://" + System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository");
-        user.setPolicy(true, new RepositoryPolicy(true, updatePolicy, checksumPolicy));
-
-        repositories.put("user", user);
-        if (appendSystemRepos) {
-            for (RemoteRepository sysRepo : MavenUtils.getRemoteRepositories()) {
-                sysRepo.setProxy(session.getProxySelector().getProxy(sysRepo));
-                repositories.put(sysRepo.getId(), sysRepo);
-            }
+        if (repositories == null) {
+            repositories = resolver.getRepositories();
         }
     }
 
@@ -182,24 +117,29 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
 
     @Override
     public File download(String path) throws InvalidMavenArtifactRequest {
+        if (path == null) {
+            throw new InvalidMavenArtifactRequest();
+        }
+
         Matcher artifactMatcher = ARTIFACT_REQUEST_URL_REGEX.matcher(path);
         Matcher metdataMatcher = ARTIFACT_METADATA_URL_REGEX.matcher(path);
 
-        if (path == null) {
-            throw new InvalidMavenArtifactRequest();
-        } else if (metdataMatcher.matches()) {
+        if (metdataMatcher.matches()) {
             LOGGER.log(Level.INFO, String.format("Received request for maven metadata : %s", path));
             Metadata metadata = null;
             try {
                 metadata = convertPathToMetadata(path);
                 List<MetadataRequest> requests = new ArrayList<MetadataRequest>();
                 String id = metdataMatcher.group(7);
-                if (repositories.containsKey(id)) {
-                    MetadataRequest request = new MetadataRequest(metadata, repositories.get(id), null);
-                    request.setFavorLocalRepository(false);
-                    requests.add(request);
-                } else {
-                    for (RemoteRepository repository : repositories.values()) {
+                for (RemoteRepository repository : repositories) {
+                    if (repository.getId().equals(id)) {
+                        MetadataRequest request = new MetadataRequest(metadata, repository, null);
+                        request.setFavorLocalRepository(false);
+                        requests.add(request);
+                    }
+                }
+                if (requests.isEmpty()) {
+                    for (RemoteRepository repository : repositories) {
                         MetadataRequest request = new MetadataRequest(metadata, repository, null);
                         request.setFavorLocalRepository(false);
                         requests.add(request);
@@ -220,11 +160,8 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
         } else if (artifactMatcher.matches()) {
             LOGGER.log(Level.INFO, String.format("Received request for maven artifact : %s", path));
             Artifact artifact = convertPathToArtifact(path);
-            String id = artifact.getGroupId() + ":" + artifact.getArtifactId();
             try {
-                ArtifactRequest request = new ArtifactRequest(artifact, new ArrayList<RemoteRepository>(repositories.values()), null);
-                ArtifactResult result = system.resolveArtifact(session, request);
-                return result.getArtifact().getFile();
+                return resolver.resolveFile(artifact);
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, String.format("Could not find artifact : %s due to %s", artifact, e), e);
                 return null;
@@ -395,79 +332,6 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
         return projectDeployer.deployProject(requirements);
     }
 
-    protected RepositorySystemSession newSession(RepositorySystem system, String localRepository) {
-
-        DefaultRepositorySystemSession session = new MavenRepositorySystemSession();
-        session.setOffline(false);
-        session.setProxySelector(MavenUtils.getProxySelector(proxyProtocol, proxyHost, proxyPort, proxyNonProxyHosts, proxyUsername, proxyPassword));
-        session.setMirrorSelector(MavenUtils.getMirrorSelector());
-        session.setAuthenticationSelector(MavenUtils.getAuthSelector());
-        session.setCache(new DefaultRepositoryCache());
-        session.setUpdatePolicy(updatePolicy);
-        session.setChecksumPolicy(checksumPolicy);
-        LocalRepository localRepo = new LocalRepository(localRepository);
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepo));
-        return session;
-    }
-
-    protected RepositorySystem newRepositorySystem() {
-        return RepositorySystemFactory.newRepositorySystem();
-    }
-
-    /**
-     * Creates a {@link RemoteRepository} for the specified url.
-     * @param repositoryUrl The repository URL.
-     * @return
-     */
-    static RemoteRepository createRemoteRepository(String repositoryUrl) {
-        String id;
-        RemoteRepository remoteRepository = null;
-        repositoryUrl = repositoryUrl.trim();
-        Authentication authentication = getAuthentication(repositoryUrl);
-        if (authentication != null) {
-            repositoryUrl = repositoryUrl.replaceFirst(String.format("%s:%s@", authentication.getUsername(), authentication.getPassword()), "");
-        }
-
-        Matcher idMatcher = REPOSITORY_ID_REGEX.matcher(repositoryUrl);
-        if (idMatcher.matches()) {
-            id = idMatcher.group(2);
-            repositoryUrl = cleanUpRepositorySpec(repositoryUrl);
-            remoteRepository = new RemoteRepository(id + Math.abs(repositoryUrl.hashCode()), DEFAULT_REPO_ID, repositoryUrl);
-        } else {
-            id = "rep-" + Math.abs(repositoryUrl.hashCode());
-            repositoryUrl = cleanUpRepositorySpec(repositoryUrl);
-            remoteRepository = new RemoteRepository("repo-" + Math.abs(repositoryUrl.hashCode()), DEFAULT_REPO_ID, repositoryUrl);
-        }
-        remoteRepository.setId(id);
-        if (authentication != null) {
-            remoteRepository.setAuthentication(authentication);
-        }
-        return remoteRepository;
-    }
-
-    /**
-     * Get the {@link Authentication} instance if the URL contains credentials, otherwise return null.
-     * @param repositoryUrl
-     * @return
-     */
-     static Authentication getAuthentication(String repositoryUrl) {
-        Authentication authentication = null;
-        try {
-            URL url = new URL(repositoryUrl);
-            String authority = url.getUserInfo();
-            if (!Strings.isNullOrEmpty(authority)) {
-                String[] parts = authority.split(":");
-                if (parts.length == 2) {
-                    authentication = new Authentication(parts[0], parts[1]);
-                }
-            }
-        } catch (MalformedURLException e) {
-            LOGGER.warning("{} does not look like a valid repository URL");
-        }
-        return authentication;
-    }
-
-
     /**
      * Converts the path of the request to maven coords.
      * The format is the same as the one used in {@link DefaultArtifact}.
@@ -603,121 +467,8 @@ public class MavenProxyServletSupport extends HttpServlet implements MavenProxy 
         return tmpFile;
     }
 
-    /**
-     * Removes all options from the repository spec.
-     *
-     * @param spec
-     * @return
-     */
-    static String cleanUpRepositorySpec(String spec) {
-        if (spec == null || spec.isEmpty()) {
-            return spec;
-        } else if (!spec.contains("@")) {
-            return spec;
-        } else {
-            return spec.substring(0, spec.indexOf('@'));
-        }
-    }
-
-    public String getLocalRepository() {
-        return localRepository;
-    }
-
-    public List<String> getRemoteRepositories() {
-        return remoteRepositories;
-    }
-
-    public boolean isAppendSystemRepos() {
-        return appendSystemRepos;
-    }
-
-    public String getUpdatePolicy() {
-        return updatePolicy;
-    }
-
-    public String getChecksumPolicy() {
-        return checksumPolicy;
-    }
-
-    public String getProxyProtocol() {
-        return proxyProtocol;
-    }
-
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    public String getProxyUsername() {
-        return proxyUsername;
-    }
-
-    public String getProxyPassword() {
-        return proxyPassword;
-    }
-
-    public String getProxyNonProxyHosts() {
-        return proxyNonProxyHosts;
-    }
-
     public ProjectDeployer getProjectDeployer() {
         return projectDeployer;
     }
 
-<<<<<<< HEAD
-    public static class LogAdapter implements org.sonatype.aether.spi.log.Logger {
-
-        public boolean isDebugEnabled() {
-            return LOGGER.isLoggable(Level.FINE);
-        }
-
-        public void debug(String msg) {
-            LOGGER.log(Level.FINE, msg);
-        }
-
-        public void debug(String msg, Throwable error) {
-            LOGGER.log(Level.FINE, msg, error);
-        }
-
-        public boolean isWarnEnabled() {
-            return LOGGER.isLoggable(Level.WARNING);
-        }
-
-        public void warn(String msg) {
-            LOGGER.log(Level.WARNING, msg);
-        }
-
-        public void warn(String msg, Throwable error) {
-            LOGGER.log(Level.WARNING, msg, error);
-        }
-    }
-
-    public static class ManualWagonProvider implements WagonProvider {
-
-        public Wagon lookup(String roleHint)
-                throws Exception {
-            if ("file".equals(roleHint)) {
-                return new FileWagon();
-            } else if ("http".equals(roleHint)) {
-                LightweightHttpWagon wagon = new LightweightHttpWagon();
-                wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
-                return wagon;
-            } else if ("https".equals(roleHint)) {
-                LightweightHttpsWagon wagon = new LightweightHttpsWagon();
-                wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
-                return wagon;
-            }
-            return null;
-        }
-
-        public void release(Wagon wagon) {
-
-        }
-    }
-
-=======
->>>>>>> bd89b7e... Remove most of io.fabric8.agent.mvn package
 }

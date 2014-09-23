@@ -122,7 +122,7 @@ public class DependencyFilters {
 
     protected static Filter<Dependency> parseSingleFilter(String text) {
         String[] split = text.split(":");
-        if (split == null || split.length == 0) {
+        if (split.length == 0) {
             return null;
         } else {
             Filter<String> groupFilter = createStringFilter(split[0]);

@@ -39,13 +39,13 @@ public interface ServiceConstants
     /**
      * Warning: use only in framework properties.  If present, do not accept configuration, wait for one without this flag.
      */
-    String REQUIRE_CONFIG_ADMIN_CONFIG = ".requireConfigAdminConfig";
+    String REQUIRE_CONFIG_ADMIN_CONFIG = "requireConfigAdminConfig";
 
     /**
      * Add the default local repo (e.g. ~/.m2/repository) as a remote repo.  Useful when setting the local repo to be e.g. karaf system repo.
      * BE CAREFUL! if you are using mirrors, do not mirror local repos!  e.g. use <mirrorOf>external:*</mirrorOf>
      */
-    String PROPERTY_LOCAL_REPO_AS_REMOTE = ".defaultLocalRepoAsRemote";
+    String PROPERTY_LOCAL_REPO_AS_REMOTE = "defaultLocalRepoAsRemote";
 
     /**
      * Global update policy property name.
@@ -57,44 +57,56 @@ public interface ServiceConstants
      * "http://sonatype.github.com/sonatype-aether/apidocs/org/sonatype/aether/util/DefaultRepositorySystemSession.html#setUpdatePolicy%28java.lang.String%29"
      * >DefaultRepositorySystemSession</a>
      */
-    String PROPERTY_GLOBAL_UPDATE_POLICY = ".globalUpdatePolicy";
+    String PROPERTY_GLOBAL_UPDATE_POLICY = "globalUpdatePolicy";
+
+    /**
+     * Global checksum policy property name.
+     * <p>
+     * Provides <a href="http://maven.apache.org/settings.html">repository checksum policy</a> which
+     * will be applied to all configured repositories.
+     * <p>
+     * See <a href=
+     * "http://sonatype.github.com/sonatype-aether/apidocs/org/sonatype/aether/util/DefaultRepositorySystemSession.html#setChecksumPolicy%28java.lang.String%29"
+     * >DefaultRepositorySystemSession</a>
+     */
+    String PROPERTY_GLOBAL_CHECKSUM_POLICY = "globalChecksumPolicy";
 
     /**
      * Certificate check configuration property name.
      */
-    String PROPERTY_CERTIFICATE_CHECK = ".certificateCheck";
+    String PROPERTY_CERTIFICATE_CHECK = "certificateCheck";
     
     /**
      * Maven settings file configuration property name.
      */
-    String PROPERTY_SETTINGS_FILE = ".settings";
+    String PROPERTY_SETTINGS_FILE = "settings";
     
     /**
      * LocalRepository configuration property name.
      */
-    String PROPERTY_LOCAL_REPOSITORY = ".localRepository";
+    String PROPERTY_LOCAL_REPOSITORY = "localRepository";
     
     /**
      * DefaultRepositories configuration property name
      */
-    String PROPERTY_DEFAULT_REPOSITORIES = ".defaultRepositories";
+    String PROPERTY_DEFAULT_REPOSITORIES = "defaultRepositories";
     
     /**
      * Repositories configuration property name.
      */
-    String PROPERTY_REPOSITORIES = ".repositories";
+    String PROPERTY_REPOSITORIES = "repositories";
     
     /**
      * Use fallback repositories switch configuration property name.
      */
-    String PROPERTY_USE_FALLBACK_REPOSITORIES = ".useFallbackRepositories";
+    String PROPERTY_USE_FALLBACK_REPOSITORIES = "useFallbackRepositories";
     
     /**
      * Proxy support configuration property name.
      */
-    String PROPERTY_PROXY_SUPPORT = ".proxySupport";
+    String PROPERTY_PROXY_SUPPORT = "proxySupport";
     
-    String PROPERTY_SECURITY = ".security";
+    String PROPERTY_SECURITY = "security";
     
     /**
      * Option to mark repository as allowing snapshots.
@@ -105,7 +117,12 @@ public interface ServiceConstants
      * Option to configure the default timeout; use a default timeout of
      * 5 secs by default.
      */
-    String PROPERTY_TIMEOUT = ".timeout";
+    String PROPERTY_TIMEOUT = "timeout";
+
+    /**
+     * Option to set maven offline.
+     */
+    String PROPERTY_OFFLINE = "offline";
     
     /**
      * Option to mark repository as not allowing releases.
@@ -128,7 +145,7 @@ public interface ServiceConstants
      * Proxies given via property.
      * Expected layout: http:host=foo,port=8080;https:host=bar,port=9090
      */
-    String PROPERTY_PROXIES = ".proxies";
+    String PROPERTY_PROXIES = "proxies";
     
     /**
      * Default enable proxies or not if property PROPERTY_PROXY_SUPPORT is not set at all.

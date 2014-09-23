@@ -54,19 +54,19 @@ class MavenSecurityDispatcher implements SecDispatcher {
 
     private File securitySettingsPath;
 
-    public MavenSecurityDispatcher(File securitySettings) {
+    public MavenSecurityDispatcher(String securitySettings) {
         this.cipher = new MavenPlexusCipher();
-        this.securitySettingsPath = securitySettings;
+        this.securitySettingsPath = securitySettings != null ? new File(securitySettings) : null;
         // settings-security is loaded only if it exists
         // error is raised later only in case that it is missing but needed
-        if (securitySettings.exists() && securitySettings.canRead()) {
+        if (securitySettingsPath != null && securitySettingsPath.exists() && securitySettingsPath.canRead()) {
             try {
-                this.securitySettings = SecUtil.read(securitySettings.getAbsolutePath(), true);
+                this.securitySettings = SecUtil.read(securitySettingsPath.getAbsolutePath(), true);
             } catch (SecDispatcherException e) {
                 // exception is ignored, just logged to end user so he's aware of the problem
                 // this is default Maven behavior
                 log.log(Level.WARNING, "Unable to read security configuration from: "
-                        + securitySettings.getAbsolutePath() + ". Configuration will be ignored.", e);
+                        + securitySettingsPath.getAbsolutePath() + ". Configuration will be ignored.", e);
             }
         }
     }

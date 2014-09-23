@@ -32,12 +32,14 @@ import org.apache.maven.settings.Settings;
  */
 public interface MavenConfiguration {
 
+    boolean isOffline();
+
     /**
      * Returns true if the certificate should be checked on SSL connection, false otherwise.
      *
      * @return true if the certificate should be checked
      */
-    Boolean getCertificateCheck();
+    boolean getCertificateCheck();
 
     /**
      * Returns the URL of maven settings file.
@@ -64,12 +66,21 @@ public interface MavenConfiguration {
 
     /**
      * Global repository update policy. 
-     * 
+     *
      * See {@link io.fabric8.maven.url.ServiceConstants#PROPERTY_GLOBAL_UPDATE_POLICY}
-     * 
+     *
      * @return repository update policy or null if not set
      */
     String getGlobalUpdatePolicy();
+
+    /**
+     * Global repository update policy.
+     *
+     * See {@link io.fabric8.maven.url.ServiceConstants#PROPERTY_GLOBAL_CHECKSUM_POLICY}
+     *
+     * @return repository update policy or null if not set
+     */
+    String getGlobalChecksumPolicy();
 
     /**
      * Returns the url of local repository.

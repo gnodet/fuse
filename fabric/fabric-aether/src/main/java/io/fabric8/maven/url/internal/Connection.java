@@ -101,6 +101,7 @@ public class Connection
         MavenRepositoryURL repoUrl = m_parser.getRepositoryURL();
         if ( repoUrl != null )
         {
+            // TODO: the config should be copied to not alter the original
             MavenConfigurationImpl config = (MavenConfigurationImpl) configuration;
             config.set( ServiceConstants.PID + ServiceConstants.PROPERTY_REPOSITORIES, Arrays.asList(repoUrl) );
         }

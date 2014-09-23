@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -34,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.fabric8.aether.MavenResolver;
 import io.fabric8.api.FabricConstants;
 import io.fabric8.api.RuntimeProperties;
 import io.fabric8.common.util.Closeables;
@@ -48,8 +48,8 @@ public class MavenDownloadProxyServlet extends MavenProxyServletSupport {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
 
-    public MavenDownloadProxyServlet(RuntimeProperties runtimeProperties, String localRepository, List<String> remoteRepositories, boolean appendSystemRepos, String updatePolicy, String checksumPolicy, String proxyProtocol, String proxyHost, int proxyPort, String proxyUsername, String proxyPassword, String proxyNonProxyHosts, ProjectDeployer projectDeployer) {
-        super(localRepository, remoteRepositories, appendSystemRepos, updatePolicy, checksumPolicy, proxyProtocol, proxyHost, proxyPort, proxyUsername, proxyPassword, proxyNonProxyHosts, projectDeployer);
+    public MavenDownloadProxyServlet(MavenResolver resolver, RuntimeProperties runtimeProperties, ProjectDeployer projectDeployer) {
+        super(resolver, projectDeployer);
         this.runtimeProperties = runtimeProperties;
     }
 
@@ -122,7 +122,7 @@ public class MavenDownloadProxyServlet extends MavenProxyServletSupport {
 
     private class ArtifactDownloadFuture extends FutureTask<File> {
 
-        private final AtomicInteger paritcipans = new AtomicInteger();
+        private final AtomicInteger participants = new AtomicInteger();
 
         public ArtifactDownloadFuture(String path) {
             super(new ArtifactDownloadTask(path));
@@ -130,12 +130,12 @@ public class MavenDownloadProxyServlet extends MavenProxyServletSupport {
 
         @Override
         public File get() throws InterruptedException, ExecutionException {
-            paritcipans.incrementAndGet();
+            participants.incrementAndGet();
             return super.get();
         }
 
         public synchronized void release(File f) {
-            if (paritcipans.decrementAndGet() == 0) {
+            if (participants.decrementAndGet() == 0) {
                 f.delete();
             }
         }
@@ -153,7 +153,7 @@ public class MavenDownloadProxyServlet extends MavenProxyServletSupport {
         public File call() throws Exception {
             File download = download(path);
             if (download != null)  {
-            File tmpFile = io.fabric8.utils.Files.createTempFile(runtimeProperties.getDataPath());
+            File tmpFile = io.fabric8.common.util.Files.createTempFile(runtimeProperties.getDataPath());
             Files.copy(download, tmpFile);
             return tmpFile;
             } else {

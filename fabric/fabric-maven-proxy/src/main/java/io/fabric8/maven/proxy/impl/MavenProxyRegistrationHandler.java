@@ -15,6 +15,19 @@
  */
 package io.fabric8.maven.proxy.impl;
 
+import java.io.File;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import io.fabric8.aether.MavenResolver;
 import io.fabric8.api.RuntimeProperties;
 import io.fabric8.api.jcip.GuardedBy;
 import io.fabric8.api.jcip.ThreadSafe;
@@ -23,21 +36,29 @@ import io.fabric8.api.scr.Configurer;
 import io.fabric8.api.scr.ValidatingReference;
 import io.fabric8.deployer.ProjectDeployer;
 import io.fabric8.maven.proxy.MavenProxy;
+import io.fabric8.maven.url.ServiceConstants;
+import io.fabric8.maven.url.internal.AetherBasedResolver;
+import io.fabric8.maven.util.MavenConfigurationImpl;
 import io.fabric8.zookeeper.ZkPath;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
-import org.apache.felix.scr.annotations.*;
+import org.apache.felix.scr.annotations.Activate;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.ConfigurationPolicy;
+import org.apache.felix.scr.annotations.Deactivate;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.PropertyOption;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
 import org.apache.zookeeper.CreateMode;
+import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import static io.fabric8.common.util.Strings.join;
 import static io.fabric8.zookeeper.utils.ZooKeeperUtils.create;
 import static io.fabric8.zookeeper.utils.ZooKeeperUtils.deleteSafe;
 
@@ -111,7 +132,6 @@ public final class MavenProxyRegistrationHandler extends AbstractComponent imple
 
     @GuardedBy("AtomicBoolean") private final AtomicBoolean connected = new AtomicBoolean(false);
 
-
     public MavenProxyRegistrationHandler() {
         Map<String, Set<String>> proxies = new HashMap<String, Set<String>>();
         proxies.put(MavenProxy.DOWNLOAD_TYPE, new HashSet<String>());
@@ -122,9 +142,19 @@ public final class MavenProxyRegistrationHandler extends AbstractComponent imple
     @Activate
     void init(Map<String, ?> configuration) throws Exception {
         configurer.configure(configuration, this);
-        this.mavenDownloadProxyServlet = new MavenDownloadProxyServlet(runtimeProperties.get(), localRepository, remoteRepositories, appendSystemRepos, updatePolicy, checksumPolicy, proxyProtocol, proxyHost, proxyPort, proxyUsername, proxyPassword, nonProxyHosts, projectDeployer.get());
+
+        Properties props = new Properties();
+        props.putAll(configuration);
+        props.put(ServiceConstants.PROPERTY_LOCAL_REPOSITORY, localRepository);
+        props.put(ServiceConstants.PROPERTY_REPOSITORIES, (appendSystemRepos ? "+" : "") + join(remoteRepositories, ","));
+        props.put(ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY, updatePolicy);
+        props.put(ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY, checksumPolicy);
+        MavenConfigurationImpl config = new MavenConfigurationImpl(new PropertiesPropertyResolver(props), null);
+        MavenResolver resolver = new AetherBasedResolver( config );
+
+        this.mavenDownloadProxyServlet = new MavenDownloadProxyServlet(resolver, runtimeProperties.get(), projectDeployer.get());
         this.mavenDownloadProxyServlet.start();
-        this.mavenUploadProxyServlet = new MavenUploadProxyServlet(runtimeProperties.get(), localRepository, remoteRepositories, appendSystemRepos, updatePolicy, checksumPolicy, proxyProtocol, proxyHost, proxyPort, proxyUsername, proxyPassword, nonProxyHosts, projectDeployer.get());
+        this.mavenUploadProxyServlet = new MavenUploadProxyServlet(resolver, runtimeProperties.get(), projectDeployer.get());
         this.mavenUploadProxyServlet.start();
         try {
             HttpContext base = httpService.get().createDefaultHttpContext();
