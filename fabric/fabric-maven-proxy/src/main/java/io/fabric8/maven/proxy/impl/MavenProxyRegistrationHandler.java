@@ -63,7 +63,7 @@ import static io.fabric8.zookeeper.utils.ZooKeeperUtils.create;
 import static io.fabric8.zookeeper.utils.ZooKeeperUtils.deleteSafe;
 
 @ThreadSafe
-@Component(name = "io.fabric8.maven", label = "Fabric8 Maven Proxy Registration Handler", policy = ConfigurationPolicy.OPTIONAL, immediate = true, metatype = true)
+@Component(name = "io.fabric8.maven.proxy", label = "Fabric8 Maven Proxy Registration Handler", policy = ConfigurationPolicy.OPTIONAL, immediate = true, metatype = true)
 @Service(ConnectionStateListener.class)
 public final class MavenProxyRegistrationHandler extends AbstractComponent implements ConnectionStateListener {
 
