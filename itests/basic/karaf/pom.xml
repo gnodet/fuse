@@ -70,6 +70,11 @@
         
         <!-- Test Dependencies -->
         <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric-zookeeper</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.fabric8.runtime</groupId>
             <artifactId>fabric-runtime-container-karaf-managed</artifactId>
             <version>${project.version}</version>
