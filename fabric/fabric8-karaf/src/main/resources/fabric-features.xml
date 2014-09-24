@@ -184,6 +184,7 @@
         <feature version="${project.version}">fabric-rest</feature>
         <feature version="${project.version}">fabric-commands</feature>
         <feature version="${project.version}">fabric-agent</feature>
+        <feature version="${project.version}">fabric-maven-proxy</feature>
 
         <bundle>mvn:org.apache.karaf.features/org.apache.karaf.features.command/${karaf-version}</bundle>
         <bundle>mvn:org.apache.karaf.features/org.apache.karaf.features.management/${karaf-version}</bundle>
