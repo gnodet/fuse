@@ -275,6 +275,22 @@ public class MavenConfigurationImpl extends PropertyStore implements MavenConfig
                         if (repo.getSnapshots() != null && repo.getSnapshots().isEnabled()) {
                             builder.append("@snapshots");
                         }
+                        if (repo.getReleases() != null && repo.getReleases().isEnabled()) {
+                            if (repo.getReleases().getUpdatePolicy() != null) {
+                                builder.append("@releasesUpdate=").append(repo.getReleases().getUpdatePolicy());
+                            }
+                            if (repo.getReleases().getChecksumPolicy() != null) {
+                                builder.append("@releasesChecksum=").append(repo.getReleases().getChecksumPolicy());
+                            }
+                        }
+                        if (repo.getSnapshots() != null && repo.getSnapshots().isEnabled()) {
+                            if (repo.getSnapshots().getUpdatePolicy() != null) {
+                                builder.append("@snapshotsUpdate=").append(repo.getSnapshots().getUpdatePolicy());
+                            }
+                            if (repo.getSnapshots().getChecksumPolicy() != null) {
+                                builder.append("@snapshotsChecksum=").append(repo.getSnapshots().getChecksumPolicy());
+                            }
+                        }
                     }
                 }
                 repositoriesProp = builder.toString();

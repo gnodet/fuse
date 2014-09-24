@@ -156,4 +156,17 @@ public interface ServiceConstants
      * segment in repository spec that gives the name of the repo. Crucial for Aether handler.
      */
     String OPTION_ID = "id";
+
+    String OPTION_UPDATE = "update";
+
+    String OPTION_RELEASES_UPDATE = "releasesUpdate";
+
+    String OPTION_SNAPSHOTS_UPDATE = "snapshotsUpdate";
+
+    String OPTION_CHECKSUM = "checksum";
+
+    String OPTION_RELEASES_CHECKSUM = "releasesChecksum";
+
+    String OPTION_SNAPSHOTS_CHECKSUM = "snapshotsChecksum";
+
 }

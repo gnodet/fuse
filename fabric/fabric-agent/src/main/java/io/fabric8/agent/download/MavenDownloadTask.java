@@ -39,7 +39,8 @@ public class MavenDownloadTask extends AbstractDownloadTask implements Runnable 
                 parser.getArtifact(),
                 parser.getClassifier(),
                 parser.getType(),
-                parser.getVersion()
+                parser.getVersion(),
+                parser.getRepositoryURL()
         );
     }
 

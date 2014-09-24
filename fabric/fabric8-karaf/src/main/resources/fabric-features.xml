@@ -36,7 +36,7 @@
         <bundle>mvn:io.fabric8/fabric-ssl/${project.version}</bundle>
         <bundle>mvn:org.apache.felix/org.apache.felix.configadmin/${felix-configadmin-version}</bundle>
 
-        <bundle>mvn:org.ops4j.pax.url/pax-url-aether/${pax.url.version}</bundle>
+        <bundle>mvn:io.fabric8/fabric-aether/${project.version}</bundle>
         <bundle>mvn:org.ops4j.pax.url/pax-url-wrap/${pax.url.version}/jar/uber</bundle>
 
         <bundle>mvn:org.ops4j.pax.logging/pax-logging-api/${pax.logging.version}</bundle>

@@ -262,6 +262,27 @@ public class AetherBasedResolver implements MavenResolver {
         return list;
     }
 
+    List<RemoteRepository> selectDefaultRepositoriesAsRemote() {
+        List<RemoteRepository> list = new ArrayList<RemoteRepository>();
+        List<MavenRepositoryURL> urls = Collections.emptyList();
+        try {
+            urls = m_config.getDefaultRepositories();
+        }
+        catch( MalformedURLException exc ) {
+            LOG.error( "invalid repository URLs", exc );
+        }
+        for( MavenRepositoryURL r : urls ) {
+            if( r.isMulti() ) {
+                addSubDirs(list, r.getFile());
+            }
+            else {
+                addRepo(list, r);
+            }
+        }
+
+        return list;
+    }
+
     private void addSubDirs( List<RemoteRepository> list, File parentDir ) {
         if( !parentDir.isDirectory() ) {
             LOG.debug( "Repository marked with @multi does not resolve to a directory: "
@@ -285,10 +306,26 @@ public class AetherBasedResolver implements MavenResolver {
     
 
     private void addRepo( List<RemoteRepository> list, MavenRepositoryURL repo ) {
+        String releasesUpdatePolicy = repo.getReleasesUpdatePolicy();
+        if (releasesUpdatePolicy == null || releasesUpdatePolicy.isEmpty()) {
+            releasesUpdatePolicy = new RepositoryPolicy().getUpdatePolicy();
+        }
+        String releasesChecksumPolicy = repo.getReleasesChecksumPolicy();
+        if (releasesChecksumPolicy == null || releasesChecksumPolicy.isEmpty()) {
+            releasesChecksumPolicy = new RepositoryPolicy().getChecksumPolicy();
+        }
+        String snapshotsUpdatePolicy = repo.getSnapshotsUpdatePolicy();
+        if (snapshotsUpdatePolicy == null || snapshotsUpdatePolicy.isEmpty()) {
+            snapshotsUpdatePolicy = new RepositoryPolicy().getUpdatePolicy();
+        }
+        String snapshotsChecksumPolicy = repo.getSnapshotsChecksumPolicy();
+        if (snapshotsChecksumPolicy == null || snapshotsChecksumPolicy.isEmpty()) {
+            snapshotsChecksumPolicy = new RepositoryPolicy().getChecksumPolicy();
+        }
         RemoteRepository.Builder builder = new RemoteRepository.Builder( repo.getId(), REPO_TYPE, repo.getURL().toExternalForm() );
-        RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), RepositoryPolicy.UPDATE_POLICY_DAILY, null );
+        RepositoryPolicy releasePolicy = new RepositoryPolicy( repo.isReleasesEnabled(), releasesUpdatePolicy, releasesChecksumPolicy );
         builder.setReleasePolicy( releasePolicy );
-        RepositoryPolicy snapshotPolicy = new RepositoryPolicy( repo.isSnapshotsEnabled(), RepositoryPolicy.UPDATE_POLICY_DAILY, null );
+        RepositoryPolicy snapshotPolicy = new RepositoryPolicy( repo.isSnapshotsEnabled(), snapshotsUpdatePolicy, snapshotsChecksumPolicy );
         builder.setSnapshotPolicy( snapshotPolicy );
         Authentication authentication = getAuthentication( repo.getId() );
         if (authentication != null) {
@@ -348,9 +385,41 @@ public class AetherBasedResolver implements MavenResolver {
      * Resolve maven artifact as file in repository.
      */
     public File resolveFile( Artifact artifact ) throws IOException {
-        List<LocalRepository> defaultRepos = selectDefaultRepositories();
-        List<RemoteRepository> remoteRepos = selectRepositories();
+        return resolveFile( artifact, null );
+    }
+
+    /**
+     * Resolve maven artifact as file in repository.
+     */
+    public File resolveFile( String groupId, String artifactId, String classifier,
+                             String extension, String version,
+                             MavenRepositoryURL repositoryURL ) throws IOException {
+        Artifact artifact = new DefaultArtifact( groupId, artifactId, classifier, extension, version );
+        return resolveFile( artifact, repositoryURL );
+    }
+
+    /**
+     * Resolve maven artifact as file in repository.
+     */
+    public File resolveFile( Artifact artifact,
+                             MavenRepositoryURL repositoryURL ) throws IOException {
+        // version = mapLatestToRange( version );
+
+        List<LocalRepository> defaultRepos;
+        List<RemoteRepository> remoteRepos;
+        if (artifact.isSnapshot()) {
+            defaultRepos = new ArrayList<LocalRepository>();
+            remoteRepos = selectDefaultRepositoriesAsRemote();
+            remoteRepos.addAll(selectRepositories());
+        } else {
+            defaultRepos = selectDefaultRepositories();
+            remoteRepos = selectRepositories();
+        }
+        if (repositoryURL != null) {
+            addRepo(remoteRepos, repositoryURL);
+        }
         assignProxyAndMirrors( remoteRepos );
+
         File resolved = resolve( defaultRepos, remoteRepos, artifact );
 
         LOG.debug( "Resolved ({}) as {}", artifact.toString(), resolved.getAbsolutePath() );
@@ -364,19 +433,17 @@ public class AetherBasedResolver implements MavenResolver {
             VersionConstraint vc = new GenericVersionScheme().parseVersionConstraint(artifact.getVersion());
             if (vc.getVersion() != null) {
                 for (LocalRepository repo : defaultRepos) {
-                    RepositorySystemSession session = newSession( repo );
+                    RepositorySystemSession session = newSession(repo);
                     try {
                         return m_repoSystem
                                 .resolveArtifact(session, new ArtifactRequest(artifact, null, null))
                                 .getArtifact().getFile();
-                    }
-                    catch( ArtifactResolutionException e ) {
+                    } catch (ArtifactResolutionException e) {
                         // Ignore
                     }
                 }
             }
-        }
-        catch( InvalidVersionSpecificationException e ) {
+        } catch (InvalidVersionSpecificationException e) {
             // Should not happen
         }
         try {

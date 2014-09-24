@@ -59,6 +59,22 @@ public class MavenRepositoryURL
      * True if the repository contains releases.
      */
     private final boolean m_releasesEnabled;
+    /**
+     * Repository update policy
+     */
+    private final String m_releasesUpdatePolicy;
+    /**
+     * Repository update policy
+     */
+    private final String m_snapshotsUpdatePolicy;
+    /**
+     * Repository checksum policy
+     */
+    private final String m_releasesChecksumPolicy;
+    /**
+     * Repository checksum policy
+     */
+    private final String m_snapshotsChecksumPolicy;
 
     private final boolean m_multi;
 
@@ -83,6 +99,12 @@ public class MavenRepositoryURL
         boolean multi = false;
 
         String name = null;
+        String update = null;
+        String updateReleases = null;
+        String updateSnapshots = null;
+        String checksum = null;
+        String checksumReleases = null;
+        String checksumSnapshots = null;
 
         for( int i = 0; i < segments.length; i++ )
         {
@@ -99,10 +121,58 @@ public class MavenRepositoryURL
             {
                 multi = true;
             }
-            else if( segment.startsWith( ServiceConstants.OPTION_ID ) )
+            else if( segment.startsWith( ServiceConstants.OPTION_ID + "=" ) )
             {
                 try {
                     name = segments[ i ].split( "=" )[1].trim();
+                }catch (Exception e) {
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                }
+            }
+            else if( segment.startsWith( ServiceConstants.OPTION_RELEASES_UPDATE + "=" ) )
+            {
+                try {
+                    updateReleases = segments[ i ].split( "=" )[1].trim();
+                }catch (Exception e) {
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                }
+            }
+            else if( segment.startsWith( ServiceConstants.OPTION_SNAPSHOTS_UPDATE + "=" ) )
+            {
+                try {
+                    updateSnapshots = segments[ i ].split( "=" )[1].trim();
+                }catch (Exception e) {
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                }
+            }
+            else if( segment.startsWith( ServiceConstants.OPTION_UPDATE + "=" ) )
+            {
+                try {
+                    update = segments[ i ].split( "=" )[1].trim();
+                }catch (Exception e) {
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                }
+            }
+            else if( segment.startsWith( ServiceConstants.OPTION_RELEASES_CHECKSUM + "=" ) )
+            {
+                try {
+                    checksumReleases = segments[ i ].split( "=" )[1].trim();
+                }catch (Exception e) {
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                }
+            }
+            else if( segment.startsWith( ServiceConstants.OPTION_SNAPSHOTS_CHECKSUM + "=" ) )
+            {
+                try {
+                    checksumSnapshots = segments[ i ].split( "=" )[1].trim();
+                }catch (Exception e) {
+                    LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
+                }
+            }
+            else if( segment.startsWith( ServiceConstants.OPTION_CHECKSUM + "=" ) )
+            {
+                try {
+                    checksum = segments[ i ].split( "=" )[1].trim();
                 }catch (Exception e) {
                     LOG.warn( "Problem with segment " + segments[i] + " in " + repositorySpec );
                 }
@@ -127,6 +197,10 @@ public class MavenRepositoryURL
             name = "repo_" + spec.hashCode();
         }
         m_id = name;
+        m_releasesUpdatePolicy = updateReleases != null ? updateReleases : update;
+        m_snapshotsUpdatePolicy = updateSnapshots != null ? updateSnapshots : update;
+        m_releasesChecksumPolicy = checksumReleases != null ? checksumReleases : checksum;
+        m_snapshotsChecksumPolicy = checksumSnapshots != null ? checksumSnapshots : checksum;
 
         if( m_repositoryURL.getProtocol().equals( "file" ) )
         {
@@ -217,7 +291,23 @@ public class MavenRepositoryURL
     {
         return m_snapshotsEnabled;
     }
-    
+
+    public String getReleasesUpdatePolicy() {
+        return m_releasesUpdatePolicy;
+    }
+
+    public String getSnapshotsUpdatePolicy() {
+        return m_snapshotsUpdatePolicy;
+    }
+
+    public String getReleasesChecksumPolicy() {
+        return m_releasesChecksumPolicy;
+    }
+
+    public String getSnapshotsChecksumPolicy() {
+        return m_snapshotsChecksumPolicy;
+    }
+
     /**
      * Getter.
      *

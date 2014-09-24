@@ -286,7 +286,7 @@ public class AgentUtils {
                         sb.append(",");
                     }
                     sb.append(mavenRepo);
-                    sb.append("@snapshots");
+                    sb.append("@snapshots@snapshotsUpdate=always");
                 }
                 String existingRepos = (String) props.get("org.ops4j.pax.url.mvn.repositories");
                 if (existingRepos != null) {

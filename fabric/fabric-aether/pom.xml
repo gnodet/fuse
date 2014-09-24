@@ -235,6 +235,7 @@
                             org.sonatype.plexus.components.sec.*
                         </Private-Package>
                         <Conditional-Package>org.eclipse.aether</Conditional-Package>
+                        <Bundle-Activator>io.fabric8.maven.url.internal.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>

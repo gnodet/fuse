@@ -19,17 +19,15 @@
  */
 package io.fabric8.maven.url.internal;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
 
-import io.fabric8.maven.url.ServiceConstants;
 import io.fabric8.maven.util.MavenConfiguration;
-import io.fabric8.maven.util.MavenConfigurationImpl;
-import io.fabric8.maven.util.MavenRepositoryURL;
 import io.fabric8.maven.util.Parser;
 import org.ops4j.lang.NullArgumentException;
 import org.slf4j.Logger;
@@ -98,13 +96,6 @@ public class Connection
         NullArgumentException.validateNotNull( configuration, "Service configuration" );
 
         m_parser = new Parser( url.getPath() );
-        MavenRepositoryURL repoUrl = m_parser.getRepositoryURL();
-        if ( repoUrl != null )
-        {
-            // TODO: the config should be copied to not alter the original
-            MavenConfigurationImpl config = (MavenConfigurationImpl) configuration;
-            config.set( ServiceConstants.PID + ServiceConstants.PROPERTY_REPOSITORIES, Arrays.asList(repoUrl) );
-        }
         m_aetherBasedResolver = new AetherBasedResolver( configuration );
     }
 
@@ -130,6 +121,13 @@ public class Connection
     {
         connect();
         LOG.debug( "Resolving [" + url.toExternalForm() + "]" );
-        return m_aetherBasedResolver.resolve( m_parser.getGroup(), m_parser.getArtifact(), m_parser.getClassifier(), m_parser.getType(), m_parser.getVersion() );
+        File file = m_aetherBasedResolver.resolveFile(
+                m_parser.getGroup(),
+                m_parser.getArtifact(),
+                m_parser.getClassifier(),
+                m_parser.getType(),
+                m_parser.getVersion(),
+                m_parser.getRepositoryURL() );
+        return new FileInputStream( file );
     }
 }
