@@ -98,35 +98,35 @@ public final class MavenProxyRegistrationHandler extends AbstractComponent imple
     @Property(name = "role", label = "Jaas Role", description = "The Jaas Role to use for uploads", value = DEFAULT_ROLE)
     private volatile String role;
 
-    @Property(name = "localRepository", label = "Local Repository", description = "The path to the local maven repository")
-    private String localRepository = DEFAULT_LOCAL_REPOSITORY;
-    @Property(name = "remoteRepositories", label = "Remote Repositories", cardinality = -1, description = "A comma spearated list to the remote repositories")
-    private List<String> remoteRepositories;
-
-    @Property(name = "appendSystemRepos", label = "Append System Repositories", description = "Flag to enable use of local maven repositories (defined in maven settings.xml)")
-    private boolean appendSystemRepos;
-    @Property(name = "updatePolicy", label = "Update Policy", description = "The update policy", value = "always", options = {
-            @PropertyOption(name = "Always", value = "always"),
-            @PropertyOption(name = "Daily", value = "daily"),
-            @PropertyOption(name = "Never", value = "never")})
-    private String updatePolicy;
-    @Property(name = "checksumPolicy", label = "Checksum Policy", description = "The checksum policy", value = "warn", options = {
-            @PropertyOption(name = "Ignore", value = "ignore"),
-            @PropertyOption(name = "Fail", value = "fail"),
-            @PropertyOption(name = "Warn", value = "warn")})
-    private String checksumPolicy;
-    @Property(name = "proxyProtocol", label = "Proxy Protocol", description = "The protocol of the Proxy")
-    private String proxyProtocol;
-    @Property(name = "proxyHost", label = "Proxy Host", description = "The host of the Proxy")
-    private String proxyHost;
-    @Property(name = "proxyPort", label = "Proxy Port", description = "The port of the Proxy", intValue = 3128)
-    private int proxyPort;
-    @Property(name = "proxyUsername", label = "Proxy Username", description = "The username of the Proxy")
-    private String proxyUsername;
-    @Property(name = "proxyPassword", label = "Proxy Password", description = "The password to the Proxy")
-    private String proxyPassword;
-    @Property(name = "nonProxyHosts", label = "Non Proxy Hosts", description = "Hosts that should be reached without using a Proxy")
-    private String nonProxyHosts;
+//    @Property(name = "localRepository", label = "Local Repository", description = "The path to the local maven repository")
+//    private String localRepository = DEFAULT_LOCAL_REPOSITORY;
+//    @Property(name = "remoteRepositories", label = "Remote Repositories", cardinality = -1, description = "A comma spearated list to the remote repositories")
+//    private List<String> remoteRepositories;
+//
+//    @Property(name = "appendSystemRepos", label = "Append System Repositories", description = "Flag to enable use of local maven repositories (defined in maven settings.xml)")
+//    private boolean appendSystemRepos;
+//    @Property(name = "updatePolicy", label = "Update Policy", description = "The update policy", value = "always", options = {
+//            @PropertyOption(name = "Always", value = "always"),
+//            @PropertyOption(name = "Daily", value = "daily"),
+//            @PropertyOption(name = "Never", value = "never")})
+//    private String updatePolicy;
+//    @Property(name = "checksumPolicy", label = "Checksum Policy", description = "The checksum policy", value = "warn", options = {
+//            @PropertyOption(name = "Ignore", value = "ignore"),
+//            @PropertyOption(name = "Fail", value = "fail"),
+//            @PropertyOption(name = "Warn", value = "warn")})
+//    private String checksumPolicy;
+//    @Property(name = "proxyProtocol", label = "Proxy Protocol", description = "The protocol of the Proxy")
+//    private String proxyProtocol;
+//    @Property(name = "proxyHost", label = "Proxy Host", description = "The host of the Proxy")
+//    private String proxyHost;
+//    @Property(name = "proxyPort", label = "Proxy Port", description = "The port of the Proxy", intValue = 3128)
+//    private int proxyPort;
+//    @Property(name = "proxyUsername", label = "Proxy Username", description = "The username of the Proxy")
+//    private String proxyUsername;
+//    @Property(name = "proxyPassword", label = "Proxy Password", description = "The password to the Proxy")
+//    private String proxyPassword;
+//    @Property(name = "nonProxyHosts", label = "Non Proxy Hosts", description = "Hosts that should be reached without using a Proxy")
+//    private String nonProxyHosts;
     @Property(name = "name", label = "Container Name", description = "The name of the container", value = "${runtime.id}")
     private String name;
 
@@ -145,10 +145,6 @@ public final class MavenProxyRegistrationHandler extends AbstractComponent imple
 
         Properties props = new Properties();
         props.putAll(configuration);
-        props.put(ServiceConstants.PROPERTY_LOCAL_REPOSITORY, localRepository);
-        props.put(ServiceConstants.PROPERTY_REPOSITORIES, (appendSystemRepos ? "+" : "") + join(remoteRepositories, ","));
-        props.put(ServiceConstants.PROPERTY_GLOBAL_UPDATE_POLICY, updatePolicy);
-        props.put(ServiceConstants.PROPERTY_GLOBAL_CHECKSUM_POLICY, checksumPolicy);
         MavenConfigurationImpl config = new MavenConfigurationImpl(new PropertiesPropertyResolver(props), null);
         MavenResolver resolver = new AetherBasedResolver( config );
 
