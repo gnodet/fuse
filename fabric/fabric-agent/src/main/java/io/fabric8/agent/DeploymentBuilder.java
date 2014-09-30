@@ -107,7 +107,7 @@ public class DeploymentBuilder {
     String featureRange = "${version;==}";
 
     AgentUtils.FileDownloader downloader;
-    ResourceImpl requirements;
+    Set<Resource> requirements = new HashSet<>();
     Map<String, Resource> resources;
     Map<String, StreamProvider> providers;
     long urlHandlersTimeout;
@@ -146,7 +146,6 @@ public class DeploymentBuilder {
         this.downloader = new AgentUtils.FileDownloader(manager);
         this.resources = new ConcurrentHashMap<String, Resource>();
         this.providers = new ConcurrentHashMap<String, StreamProvider>();
-        this.requirements = new ResourceImpl("dummy", "dummy", Version.emptyVersion);
         this.metadata = metadata;
         // First, gather all bundle resources
         for (String feature : features) {
@@ -211,7 +210,9 @@ public class DeploymentBuilder {
         }
         // Build requirements
         for (String feature : features) {
-            requireFeature(feature, requirements);
+            ResourceImpl req = new ResourceImpl(feature, "requirement", Version.emptyVersion);
+            requireFeature(feature, req);
+            requirements.add(req);
         }
         for (String bundle : bundles) {
             requireResource(bundle);
@@ -236,7 +237,7 @@ public class DeploymentBuilder {
 
         ResolverImpl resolver = new ResolverImpl(new Slf4jResolverLog(LOGGER));
         ResolveContext context = new ResolveContextImpl(
-                Collections.<Resource>singleton(requirements),
+                requirements,
                 Collections.<Resource>emptySet(),
                 new AggregateRepository(repos),
                 resolveOptionalImports);
@@ -317,10 +318,7 @@ public class DeploymentBuilder {
         attrs.put(IdentityNamespace.IDENTITY_NAMESPACE, cap.getAttributes().get(IdentityNamespace.IDENTITY_NAMESPACE));
         attrs.put(IdentityNamespace.CAPABILITY_TYPE_ATTRIBUTE, cap.getAttributes().get(IdentityNamespace.CAPABILITY_TYPE_ATTRIBUTE));
         attrs.put(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE, new VersionRange((Version) cap.getAttributes().get(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE), true));
-        requirements.addRequirement(
-                new RequirementImpl(requirements, IdentityNamespace.IDENTITY_NAMESPACE,
-                        Collections.<String, String>emptyMap(), attrs));
-
+        requirements.add(res);
     }
 
     public void registerMatchingFeatures(String feature) throws IOException {
