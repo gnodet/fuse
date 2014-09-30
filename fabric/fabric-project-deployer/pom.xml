@@ -33,9 +33,6 @@
         <fuse.osgi.export>
             io.fabric8.deployer;version=${project.version};-noimport:=true,
             io.fabric8.deployer.dto*;version=${project.version};-noimport:=true,
-            io.fabric8.agent.mvn*;-noimport:=true,
-            io.fabric8.agent.download*;-noimport:=true,
-            io.fabric8.agent.utils*;-noimport:=true,
         </fuse.osgi.export>
         <fuse.osgi.import.additional>
             !org.apache.felix.bundlerepository.*,
