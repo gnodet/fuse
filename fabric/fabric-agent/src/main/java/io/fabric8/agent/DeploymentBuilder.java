@@ -263,6 +263,8 @@ public class DeploymentBuilder {
 
             if (!missing.isEmpty()) {
                 throw new ResolutionException("The following feature(s) may not exist or cannot be resolved: [" + Strings.join(missing, ", ") + "]", e, reqs);
+            } else {
+                throw e;
             }
         }
 
