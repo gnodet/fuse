@@ -42,6 +42,7 @@
             org.apache.commons.logging;
             io.fabric8.api;
             org.osgi.framework;
+            org.osgi.framework.hooks.resolver;
             org.osgi.framework.wiring;
             org.osgi.resource;
             org.osgi.service.cm;
@@ -51,16 +52,17 @@
             org.slf4j;
             org.w3c.dom;
             org.xml.sax;
-            -split-package:=merge-first,
+                -split-package:=merge-first,
             org.apache.felix.framework.monitor;
             org.osgi.service.event;
             resolution:=optional;
-            -split-package:=merge-first,
+                -split-package:=merge-first,
             !*
         </fuse.osgi.import>
         <fuse.osgi.export>
             io.fabric8.agent.download;
             io.fabric8.agent.mvn;
+            io.fabric8.agent.utils;
         </fuse.osgi.export>
         <fuse.osgi.private.pkg>
             aQute.bnd.annotation;
@@ -101,6 +103,7 @@
             org.apache.aries.util.internal;
             org.apache.felix.bundleplugin;
             org.apache.felix.resolver;
+            org.apache.felix.resolver.util;
             org.apache.felix.utils.collections;
             org.apache.felix.utils.properties;
             org.apache.felix.utils.version;
@@ -300,11 +303,13 @@
           <artifactId>fabric-api</artifactId>
         </dependency>
 
+        <!--
         <dependency>
            <groupId>org.apache.felix</groupId>
            <artifactId>org.apache.felix.resolver</artifactId>
             <scope>provided</scope>
         </dependency>
+        -->
 
         <dependency>
             <groupId>io.fabric8</groupId>
